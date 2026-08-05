@@ -74,6 +74,18 @@ public class AdminCommand implements CommandExecutor {
                 }
             }
 
+            // /eia mas [player] - mo GUI mastery
+            case "mas", "mastery" -> {
+                Player viewer = sender instanceof Player p ? p : null;
+                if (viewer == null) { sender.sendMessage("Chi player dung duoc!"); return true; }
+                Player target = args.length >= 2 ? org.bukkit.Bukkit.getPlayerExact(args[1]) : viewer;
+                if (target == null) { sender.sendMessage(color("&cPlayer khong online!")); return true; }
+
+                dev.elysium.item.gui.MasteryGui gui = new dev.elysium.item.gui.MasteryGui(plugin);
+                dev.elysium.item.gui.GuiListener.register(viewer.getUniqueId(), gui);
+                gui.open(viewer);
+            }
+
             case "reload" -> {
                 plugin.reloadConfig();
                 sender.sendMessage(color("&aReloaded!"));
@@ -91,6 +103,7 @@ public class AdminCommand implements CommandExecutor {
         s.sendMessage(color("  &7/eia list &f- Danh sach item"));
         s.sendMessage(color("  &7/eia addexp <player> <id> <amount> &f- Them EXP"));
         s.sendMessage(color("  &7/eia reload &f- Reload config"));
+        s.sendMessage(color("  &7/eia mas [player] &f- Mo GUI Mastery"));
     }
 
     private String color(String s) { return s.replace("&", "\u00a7"); }
