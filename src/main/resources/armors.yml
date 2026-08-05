@@ -1,0 +1,153 @@
+# ElysiumItem - Armor Definitions
+# EXP trigger: bi danh trung khi dang mac -> tang mastery
+
+armors:
+
+  # ── HELMET ─────────────────────────────────────────────────────────────────
+
+  HELMET_DRAGON:
+    display-name: "&4&lMũ Rồng"
+    type: HELMET
+    material: NETHERITE_HELMET
+    model-data: 6001
+    lore:
+      - "&7Mu duc tu vay rong co dai."
+      - "&7Suc manh cua rong chay trong huyet mach."
+    stats:
+      bonus-hp: 20.0
+      bonus-defense: 15.0
+      fire-resist: true
+    mastery:
+      max-level: 40
+      exp-per-hit: 5
+      bonuses:
+        5:  {bonus-hp: 5.0,       description: "HP +5"}
+        10: {bonus-defense: 5.0,  description: "Phong thu +5"}
+        15: {bonus-hp: 10.0,      description: "HP +10"}
+        20: {bonus-defense: 10.0, description: "Phong thu +10"}
+        25: {bonus-hp: 20.0,      description: "HP +20"}
+        30: {bonus-defense: 15.0, description: "Phong thu +15"}
+        35: {fire-dmg-reduce: 0.50, description: "Giam 50% sat thuong lua"}
+        40: {dragon-rage: true,   description: "MASTERY: Khi HP duoi 30% tang 40% sat thuong"}
+
+  HELMET_FROST:
+    display-name: "&b&lMũ Băng Vương"
+    type: HELMET
+    material: DIAMOND_HELMET
+    model-data: 6002
+    lore:
+      - "&7Mu cua Bang Vuong huyen thoai."
+    stats:
+      bonus-mana: 20
+      bonus-defense: 10.0
+      freeze-resist: true
+    mastery:
+      max-level: 40
+      exp-per-hit: 5
+      bonuses:
+        5:  {bonus-mana: 10,      description: "Mana +10"}
+        10: {bonus-defense: 5.0,  description: "Phong thu +5"}
+        15: {bonus-mana: 20,      description: "Mana +20"}
+        20: {bonus-defense: 10.0, description: "Phong thu +10"}
+        25: {chill-attacker: 0.20, description: "20% lam cham ke tan cong"}
+        30: {bonus-mana: 30,      description: "Mana +30"}
+        35: {bonus-mana-regen: 3, description: "Mana Regen +3/s"}
+        40: {frost-aura: true,    description: "MASTERY: Hao quang bang lam cham ke thu xung quanh"}
+
+  # ── CHESTPLATE ─────────────────────────────────────────────────────────────
+
+  CHEST_WARLORD:
+    display-name: "&6&lGiáp Chiến Thần"
+    type: CHESTPLATE
+    material: NETHERITE_CHESTPLATE
+    model-data: 6101
+    lore:
+      - "&7Giap cua cac chien than thoi thuong co."
+    stats:
+      bonus-hp: 30.0
+      bonus-defense: 20.0
+      knockback-resist: 0.30
+    mastery:
+      max-level: 40
+      exp-per-hit: 6
+      bonuses:
+        5:  {bonus-hp: 10.0,           description: "HP +10"}
+        10: {bonus-defense: 5.0,        description: "Phong thu +5"}
+        15: {bonus-hp: 20.0,           description: "HP +20"}
+        20: {bonus-defense: 10.0,       description: "Phong thu +10"}
+        25: {knockback-resist: 0.20,    description: "Giam 20% knockback"}
+        30: {bonus-hp: 30.0,           description: "HP +30"}
+        35: {thorns-damage: 0.15,       description: "Phan 15% sat thuong khi bi danh"}
+        40: {warlord-passive: true,     description: "MASTERY: Moi 5 don danh nhan duoc Shield 3s"}
+
+  CHEST_SHADOW:
+    display-name: "&5&lGiáp Bóng Tối"
+    type: CHESTPLATE
+    material: NETHERITE_CHESTPLATE
+    model-data: 6102
+    lore:
+      - "&7Giap dan tu bong toi va su doi tra."
+    stats:
+      bonus-defense: 15.0
+      bonus-speed: 0.01
+      dodge-chance: 0.05
+    mastery:
+      max-level: 40
+      exp-per-hit: 6
+      bonuses:
+        5:  {dodge-chance: 0.03,    description: "Dodge +3%"}
+        10: {bonus-speed: 0.01,     description: "Speed +1"}
+        15: {dodge-chance: 0.05,    description: "Dodge +5%"}
+        20: {bonus-defense: 5.0,    description: "Phong thu +5"}
+        25: {dodge-chance: 0.08,    description: "Dodge +8%"}
+        30: {shadow-step: true,     description: "Khi dodge tu dong dich chuyen 2m"}
+        35: {bonus-speed: 0.02,     description: "Speed +2"}
+        40: {phantom-form: true,    description: "MASTERY: 5s bat tu sau khi dodge lan thu 5"}
+
+  # ── LEGGINGS ───────────────────────────────────────────────────────────────
+
+  LEGS_TITAN:
+    display-name: "&8&lQuần Titan"
+    type: LEGGINGS
+    material: NETHERITE_LEGGINGS
+    model-data: 6201
+    lore:
+      - "&7Quan cua Titan - khong gi co the lam lung lay."
+    stats:
+      bonus-hp: 15.0
+      bonus-defense: 12.0
+      knockback-resist: 0.20
+    mastery:
+      max-level: 35
+      exp-per-hit: 5
+      bonuses:
+        5:  {bonus-hp: 5.0,        description: "HP +5"}
+        10: {bonus-defense: 3.0,   description: "Phong thu +3"}
+        15: {bonus-hp: 10.0,       description: "HP +10"}
+        20: {bonus-defense: 5.0,   description: "Phong thu +5"}
+        25: {knockback-resist: 0.15, description: "Giam knockback 15%"}
+        30: {bonus-hp: 20.0,       description: "HP +20"}
+        35: {titan-stomp: true,    description: "MASTERY: Nhay xuong gay AOE dame xung quanh"}
+
+  # ── BOOTS ──────────────────────────────────────────────────────────────────
+
+  BOOTS_SWIFT:
+    display-name: "&e&lGiày Tốc Phong"
+    type: BOOTS
+    material: DIAMOND_BOOTS
+    model-data: 6301
+    lore:
+      - "&7Giay cua gio - khong ai co the bat kip."
+    stats:
+      bonus-speed: 0.03
+      fall-damage-reduce: 0.50
+    mastery:
+      max-level: 30
+      exp-per-hit: 4
+      bonuses:
+        5:  {bonus-speed: 0.01,        description: "Speed +1"}
+        10: {fall-damage-reduce: 0.25, description: "Giam 25% dame roi"}
+        15: {bonus-speed: 0.02,        description: "Speed +2"}
+        20: {fall-damage-reduce: 0.50, description: "Giam 50% dame roi"}
+        25: {bonus-speed: 0.03,        description: "Speed +3"}
+        30: {wind-step: true,          description: "MASTERY: Moi 3s tu dong dash khi chay"}

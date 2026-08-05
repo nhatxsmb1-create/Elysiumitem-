@@ -1,0 +1,110 @@
+# ElysiumItem - Trophy Definitions
+# Loai: cu pic trong minecraft
+# EXP trigger: dao khoang san -> tang mastery
+# Moi loai khoang san cho EXP khac nhau
+
+trophies:
+
+  TROPHY_MINER:
+    display-name: "&6&lCúp Thợ Mỏ Huyền Thoại"
+    type: TROPHY
+    material: GOLDEN_PICKAXE
+    model-data: 7001
+    lore:
+      - "&7Cuc dinh cua nghe dao mo."
+      - "&7Khong co khoang san nao co the thoat."
+    stats:
+      mining-speed: 0.10
+      bonus-drop-rate: 0.05
+    mastery:
+      max-level: 50
+      ore-exp:
+        COAL_ORE: 1
+        DEEPSLATE_COAL_ORE: 1
+        IRON_ORE: 2
+        DEEPSLATE_IRON_ORE: 3
+        COPPER_ORE: 2
+        DEEPSLATE_COPPER_ORE: 3
+        GOLD_ORE: 4
+        DEEPSLATE_GOLD_ORE: 5
+        REDSTONE_ORE: 3
+        DEEPSLATE_REDSTONE_ORE: 4
+        LAPIS_ORE: 4
+        DEEPSLATE_LAPIS_ORE: 5
+        DIAMOND_ORE: 8
+        DEEPSLATE_DIAMOND_ORE: 10
+        EMERALD_ORE: 10
+        DEEPSLATE_EMERALD_ORE: 12
+        NETHER_QUARTZ_ORE: 3
+        NETHER_GOLD_ORE: 4
+        ANCIENT_DEBRIS: 25
+      bonuses:
+        5:  {mining-speed: 0.05,    description: "Toc do dao +5%"}
+        10: {bonus-drop-rate: 0.05, description: "Drop rate +5%"}
+        15: {mining-speed: 0.10,    description: "Toc do dao +10%"}
+        20: {bonus-drop-rate: 0.10, description: "Drop rate +10% + Co 5% duoc gap doi khoang san"}
+        25: {mining-speed: 0.15,    description: "Toc do dao +15%"}
+        30: {auto-smelt: true,      description: "Tu dong nau quang khi dao"}
+        35: {bonus-drop-rate: 0.15, description: "Drop rate +15%"}
+        40: {vein-miner: 3,         description: "5% co hoi dao them 3 khoi lien ke cung loai"}
+        45: {mining-speed: 0.25,    description: "Toc do dao +25%"}
+        50: {legendary-drop: true,  description: "MASTERY: Moi lan dao co 1% ra item Elysium ngau nhien"}
+
+  TROPHY_NETHER:
+    display-name: "&c&lCúp Địa Ngục"
+    type: TROPHY
+    material: NETHERITE_PICKAXE
+    model-data: 7002
+    lore:
+      - "&7Duoc toi luyen tu nhiet do cua dia nguc."
+    stats:
+      mining-speed: 0.15
+      fire-resist: true
+    mastery:
+      max-level: 40
+      ore-exp:
+        NETHER_QUARTZ_ORE: 5
+        NETHER_GOLD_ORE: 8
+        ANCIENT_DEBRIS: 30
+        BASALT: 1
+        BLACKSTONE: 1
+        MAGMA_BLOCK: 3
+      bonuses:
+        5:  {mining-speed: 0.05,    description: "Toc do dao +5%"}
+        10: {nether-drop: 0.10,     description: "Khoang san Nether drop rate +10%"}
+        15: {mining-speed: 0.10,    description: "Toc do dao +10%"}
+        20: {debris-chance: 0.05,   description: "+5% chance Ancient Debris khi dao Nether"}
+        25: {mining-speed: 0.20,    description: "Toc do dao +20%"}
+        30: {auto-smelt: true,      description: "Tu dong nau quang Nether"}
+        35: {nether-drop: 0.20,     description: "Drop rate Nether +20%"}
+        40: {ancient-aura: true,    description: "MASTERY: Hao quang tim Ancient Debris trong vong 10m"}
+
+  TROPHY_CRYSTAL:
+    display-name: "&d&lCúp Pha Lê"
+    type: TROPHY
+    material: DIAMOND_PICKAXE
+    model-data: 7003
+    lore:
+      - "&7Dao duoc trong bong toi."
+      - "&7Phat sang trong dem."
+    stats:
+      mining-speed: 0.08
+      night-vision: true
+    mastery:
+      max-level: 35
+      ore-exp:
+        AMETHYST_CLUSTER: 5
+        DIAMOND_ORE: 6
+        DEEPSLATE_DIAMOND_ORE: 8
+        EMERALD_ORE: 8
+        DEEPSLATE_EMERALD_ORE: 10
+        LAPIS_ORE: 4
+        DEEPSLATE_LAPIS_ORE: 5
+      bonuses:
+        5:  {night-vision-passive: true, description: "Nhin thay trong bong toi"}
+        10: {gem-drop: 0.10,             description: "Da quy drop rate +10%"}
+        15: {mining-speed: 0.10,         description: "Toc do dao +10%"}
+        20: {gem-drop: 0.20,             description: "Da quy drop rate +20%"}
+        25: {crystal-sight: true,        description: "Hien thi vi tri khoang san qua tuong"}
+        30: {gem-drop: 0.30,             description: "Da quy drop rate +30%"}
+        35: {gem-magnet: true,           description: "MASTERY: Tu dong hut khoang san trong vong 5m"}

@@ -1,0 +1,31 @@
+# ElysiumItem Configuration
+prefix: "&5[Item] &r"
+
+# Database
+database:
+  type: sqlite   # sqlite hoac mysql
+  mysql:
+    host: localhost
+    port: 3306
+    database: elysium
+    username: root
+    password: password
+
+# Mastery settings
+mastery:
+  # Hien thi EXP notification tren actionbar
+  show-actionbar: true
+  # Luu dirty items sau bao nhieu giay (auto-save)
+  auto-save-interval: 300  # 5 phut
+
+# Trophy settings
+trophy:
+  # Co hoi Vein Miner khi level >= 40
+  vein-miner-chance: 0.05
+  # Co hoi Legendary Drop khi level 50
+  legendary-drop-chance: 0.01
+
+# Armor/Accessory settings
+armor:
+  # Cooldown revive (NECKLACE_OF_GUARDIAN) - giay
+  revive-cooldown: 300
