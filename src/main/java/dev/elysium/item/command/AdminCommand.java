@@ -1,6 +1,7 @@
 package dev.elysium.item.command;
 
 import dev.elysium.item.ElysiumItem;
+import dev.elysium.item.gui.AdminGui;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,8 +25,13 @@ public class AdminCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            sender.sendMessage("§e/eitemadmin give <player> <item_id>");
-            sender.sendMessage("§e/eitemadmin reload");
+            if (sender instanceof Player player) {
+                AdminGui gui = new AdminGui(plugin, player);
+                dev.elysium.core.ElysiumCore.getInstance().getGuiManager().open(player, gui);
+            } else {
+                sender.sendMessage("§e/eitemadmin give <player> <item_id>");
+                sender.sendMessage("§e/eitemadmin reload");
+            }
             return true;
         }
 

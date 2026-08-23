@@ -2,7 +2,6 @@ package dev.elysium.item;
 
 import dev.elysium.item.command.AdminCommand;
 import dev.elysium.item.command.ItemCommand;
-import dev.elysium.item.gui.GuiListener;
 import dev.elysium.item.item.ItemManager;
 import dev.elysium.item.accessory.AccessoryManager;
 import dev.elysium.item.listener.ArmorListener;
@@ -38,7 +37,6 @@ public class ElysiumItem extends JavaPlugin {
 
         // Listeners
         getServer().getPluginManager().registerEvents(new ArmorListener(this),   this);
-        getServer().getPluginManager().registerEvents(new GuiListener(),          this);
         getServer().getPluginManager().registerEvents(new dev.elysium.item.mechanic.MechanicListener(this), this);
 
         getLogger().info("=== ElysiumItem v" + getDescription().getVersion() + " enabled! ===");

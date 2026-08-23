@@ -13,10 +13,10 @@ import java.util.*;
 public class AdminGui extends ElysiumGui {
 
     private final ElysiumItem plugin;
-    private final Player      target;     // Player se duoc give item
+    private final Player      target;
     private int               page = 0;
 
-    private static final int PAGE_SIZE = 28; // Slot hien thi item
+    private static final int PAGE_SIZE = 28;
     private static final int[] ITEM_SLOTS = {
         10,11,12,13,14,15,16,
         19,20,21,22,23,24,25,
@@ -24,11 +24,10 @@ public class AdminGui extends ElysiumGui {
         37,38,39,40,41,42,43
     };
 
-    // Filter
     private ElysiumItemData.ItemCategory filterCategory = null;
 
     public AdminGui(ElysiumItem plugin, Player target) {
-        super("&5&l[Admin] Elysium Items", 54);
+        super("&5&l[Admin] Kho Trang Bị", 54);
         this.plugin = plugin;
         this.target = target;
     }
@@ -37,7 +36,6 @@ public class AdminGui extends ElysiumGui {
     public void build(Player viewer) {
         fill(ItemBuilder.filler());
 
-        // Lay danh sach item theo filter
         List<Map.Entry<String, ElysiumItemData>> items = new ArrayList<>();
         for (Map.Entry<String, ElysiumItemData> entry : plugin.getItemManager().getAllItems().entrySet()) {
             if (filterCategory == null || entry.getValue().getCategory() == filterCategory) {
@@ -45,7 +43,6 @@ public class AdminGui extends ElysiumGui {
             }
         }
 
-        // Hien item theo page
         int start = page * PAGE_SIZE;
         for (int i = 0; i < ITEM_SLOTS.length; i++) {
             int idx = start + i;
@@ -65,10 +62,8 @@ public class AdminGui extends ElysiumGui {
             data.getLore().forEach(l -> lore.add(color(l)));
             lore.add("");
             lore.add(color("&7ID: &f" + id));
-            lore.add(color("&7Give cho: &e" + target.getName()));
             lore.add("");
-            lore.add(color("&aLeft Click: &fGive 1 cai"));
-            lore.add(color("&6Right Click: &fGive voi Mastery info"));
+            lore.add(color("&a[Click] &fđể lấy 1 cái vào túi."));
 
             setButton(ITEM_SLOTS[i], new GuiButton(
                     new ItemBuilder(mat)
@@ -78,99 +73,62 @@ public class AdminGui extends ElysiumGui {
                             .build(),
                     e -> {
                         e.setCancelled(true);
-                        if (e.isRightClick()) {
-                            plugin.getItemManager().giveItem(target, id);
-                            viewer.sendMessage(color("&aGive &f" + data.getDisplayName()
-                                    + " &acho &e" + target.getName()));
-                        } else {
-                            // Left click: give item thuan tuy khong co mastery info
-                            org.bukkit.inventory.ItemStack item = plugin.getItemManager().createItem(id);
-                            target.getInventory().addItem(item);
-                            viewer.sendMessage(color("&aGive &f" + data.getDisplayName()
-                                    + " &acho &e" + target.getName()));
-                        }
+                        org.bukkit.inventory.ItemStack item = plugin.getItemManager().createItem(id);
+                        target.getInventory().addItem(item);
+                        viewer.sendMessage(color("&aĐã lấy &f" + data.getDisplayName()));
                     }
             ));
         }
 
-        // ── Filter buttons (row 1) ────────────────────────────────────────────
-
-        // ALL
+        // Filters
         setButton(0, new GuiButton(
                 new ItemBuilder(filterCategory == null ? Material.NETHER_STAR : Material.GRAY_DYE)
                         .name(color(filterCategory == null ? "&e&lTẤT CẢ" : "&7Tất Cả")).build(),
-                e -> { e.setCancelled(true); filterCategory = null; page = 0; build(viewer); player(viewer); }
+                e -> { e.setCancelled(true); filterCategory = null; page = 0; buttons.clear(); inventory.clear(); build(viewer); }
         ));
 
-        // ACCESSORY
         setButton(1, new GuiButton(
                 new ItemBuilder(filterCategory == ElysiumItemData.ItemCategory.ACCESSORY
                         ? Material.EMERALD : Material.GRAY_DYE)
                         .name(color(filterCategory == ElysiumItemData.ItemCategory.ACCESSORY
                                 ? "&a&lPHỤ KIỆN" : "&7Phụ Kiện")).build(),
-                e -> { e.setCancelled(true); filterCategory = ElysiumItemData.ItemCategory.ACCESSORY; page = 0; build(viewer); player(viewer); }
+                e -> { e.setCancelled(true); filterCategory = ElysiumItemData.ItemCategory.ACCESSORY; page = 0; buttons.clear(); inventory.clear(); build(viewer); }
         ));
 
-        // ARMOR
         setButton(2, new GuiButton(
                 new ItemBuilder(filterCategory == ElysiumItemData.ItemCategory.ARMOR
                         ? Material.DIAMOND_CHESTPLATE : Material.GRAY_DYE)
                         .name(color(filterCategory == ElysiumItemData.ItemCategory.ARMOR
                                 ? "&b&lGIÁP" : "&7Giáp")).build(),
-                e -> { e.setCancelled(true); filterCategory = ElysiumItemData.ItemCategory.ARMOR; page = 0; build(viewer); player(viewer); }
+                e -> { e.setCancelled(true); filterCategory = ElysiumItemData.ItemCategory.ARMOR; page = 0; buttons.clear(); inventory.clear(); build(viewer); }
         ));
-
-        // TROPHY
-        setButton(3, new GuiButton(
-                new ItemBuilder(filterCategory == ElysiumItemData.ItemCategory.TROPHY
-                        ? Material.GOLDEN_PICKAXE : Material.GRAY_DYE)
-                        .name(color(filterCategory == ElysiumItemData.ItemCategory.TROPHY
-                                ? "&6&lCÚP" : "&7Cúp")).build(),
-                e -> { e.setCancelled(true); filterCategory = ElysiumItemData.ItemCategory.TROPHY; page = 0; build(viewer); player(viewer); }
-        ));
-
-        // Target info (slot 8)
-        fill(8, new ItemBuilder(Material.PLAYER_HEAD)
-                .name(color("&eGive cho: &f" + target.getName()))
-                .lore(color("&7Left Click = item thuần"),
-                      color("&7Right Click = item + Mastery info"))
-                .build());
 
         // Stats
         int totalItems = items.size();
         int maxPage    = Math.max(0, (totalItems - 1) / PAGE_SIZE);
 
-        // Prev page (slot 45)
         if (page > 0) {
             setButton(45, new GuiButton(
                     new ItemBuilder(Material.ARROW).name(color("&7← Trang trước")).build(),
-                    e -> { e.setCancelled(true); page--; build(viewer); player(viewer); }
+                    e -> { e.setCancelled(true); page--; buttons.clear(); inventory.clear(); build(viewer); }
             ));
+        } else {
+            fill(45, ItemBuilder.filler());
         }
 
-        // Page info (slot 49)
         fill(49, new ItemBuilder(Material.PAPER)
                 .name(color("&fTrang &e" + (page + 1) + "&f/" + (maxPage + 1)))
                 .lore(color("&7Tổng: &f" + totalItems + " item"))
                 .build());
 
-        // Next page (slot 53)
         if (page < maxPage) {
             setButton(53, new GuiButton(
                     new ItemBuilder(Material.ARROW).name(color("&7Trang sau →")).build(),
-                    e -> { e.setCancelled(true); page++; build(viewer); player(viewer); }
+                    e -> { e.setCancelled(true); page++; buttons.clear(); inventory.clear(); build(viewer); }
             ));
+        } else {
+            fill(53, ItemBuilder.filler());
         }
-
-        // Dong (slot 47)
-        setButton(47, new GuiButton(
-                new ItemBuilder(Material.BARRIER).name(color("&cĐóng")).build(),
-                e -> { e.setCancelled(true); viewer.closeInventory(); }
-        ));
-    }
-
-    private void player(Player viewer) {
-        viewer.openInventory(getInventory());
     }
 
     private String color(String s) { return s.replace("&", "\u00a7"); }
