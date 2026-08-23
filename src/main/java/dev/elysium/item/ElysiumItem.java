@@ -39,6 +39,7 @@ public class ElysiumItem extends JavaPlugin {
         // Listeners
         getServer().getPluginManager().registerEvents(new ArmorListener(this),   this);
         getServer().getPluginManager().registerEvents(new GuiListener(),          this);
+        getServer().getPluginManager().registerEvents(new dev.elysium.item.mechanic.MechanicListener(this), this);
 
         getLogger().info("=== ElysiumItem v" + getDescription().getVersion() + " enabled! ===");
         getLogger().info("Items loaded: " + itemManager.getItemIds().size());
