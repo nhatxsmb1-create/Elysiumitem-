@@ -27,7 +27,8 @@ public class ItemManager {
 
     // ── Load Config ───────────────────────────────────────────────────────────
 
-    private void loadAll() {
+    public void loadAll() {
+        itemDataMap.clear();
         loadFile("items.yml",    ElysiumItemData.ItemCategory.ACCESSORY);
         loadFile("armors.yml",   ElysiumItemData.ItemCategory.ARMOR);
         loadFile("trophies.yml", ElysiumItemData.ItemCategory.TROPHY);

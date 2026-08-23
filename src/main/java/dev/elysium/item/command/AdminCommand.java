@@ -54,6 +54,7 @@ public class AdminCommand implements CommandExecutor {
 
         if (args[0].equalsIgnoreCase("reload")) {
             plugin.reloadConfig();
+            plugin.getItemManager().loadAll();
             sender.sendMessage("§aReload thành công!");
             return true;
         }
