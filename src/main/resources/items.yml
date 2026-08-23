@@ -1,133 +1,16 @@
-# ElysiumItem - Accessory Definitions
-# Loai: RING, NECKLACE, CHARM
-# EXP trigger: bi danh trung -> tang mastery
-
 accessories:
-
-  # ── RING ───────────────────────────────────────────────────────────────────
-
-  RING_OF_WARRIOR:
-    display-name: "&c&lNhẫn Chiến Binh"
+  NHAN_HUYET_AN:
+    display-name: "&c&lNhẫn Huyết Ấn"
     type: RING
     material: GOLD_NUGGET
-    model-data: 5001
-    lore:
-      - "&7Nhan cua nhung chien binh huyen thoai."
-    stats:
-      bonus-hp: 10.0
-      bonus-defense: 5.0
-    mastery:
-      max-level: 30
-      exp-per-hit: 3
-      bonuses:
-        5:  {bonus-hp: 5.0,  description: "HP +5"}
-        10: {bonus-defense: 3.0, description: "Phong thu +3"}
-        15: {bonus-hp: 10.0, description: "HP +10"}
-        20: {bonus-defense: 5.0, description: "Phong thu +5"}
-        25: {bonus-hp: 15.0, description: "HP +15 + Khi bi danh co 10% phan sat thuong"}
-        30: {reflect-chance: 0.10, description: "MASTERY: Phan 15% sat thuong ve ke tan cong"}
-
-  RING_OF_MAGE:
-    display-name: "&b&lNhẫn Pháp Sư"
-    type: RING
-    material: LAPIS_LAZULI
-    model-data: 5002
-    lore:
-      - "&7Nhan chan truyen phep thuat co dai."
-    stats:
-      bonus-mana: 30
-      bonus-mana-regen: 2
-    mastery:
-      max-level: 30
-      exp-per-hit: 3
-      bonuses:
-        5:  {bonus-mana: 10,    description: "Mana +10"}
-        10: {bonus-mana-regen: 1, description: "Mana Regen +1/s"}
-        15: {bonus-mana: 20,   description: "Mana +20"}
-        20: {bonus-mana-regen: 2, description: "Mana Regen +2/s"}
-        25: {bonus-mana: 30,   description: "Mana +30"}
-        30: {skill-cd-reduce: 0.10, description: "MASTERY: Giam 10% cooldown tat ca skill"}
-
-  # ── NECKLACE ───────────────────────────────────────────────────────────────
-
-  NECKLACE_OF_GUARDIAN:
-    display-name: "&a&lDây Chuyền Hộ Vệ"
-    type: NECKLACE
-    material: EMERALD
     model-data: 5101
     lore:
-      - "&7Day chuyen ban phat tu thoi thuong co."
-    stats:
-      damage-reduce: 0.05
-      bonus-hp: 5.0
-    mastery:
-      max-level: 30
-      exp-per-hit: 4
-      bonuses:
-        5:  {damage-reduce: 0.02, description: "Giam 2% sat thuong nhan vao"}
-        10: {bonus-hp: 10.0,     description: "HP +10"}
-        15: {damage-reduce: 0.03, description: "Giam 3% sat thuong nhan vao"}
-        20: {bonus-hp: 20.0,     description: "HP +20"}
-        25: {damage-reduce: 0.05, description: "Giam 5% sat thuong nhan vao"}
-        30: {revive-chance: 0.20, description: "MASTERY: 20% khong chet lan dau trong chien dau"}
-
-  NECKLACE_OF_ASSASSIN:
-    display-name: "&5&lDây Chuyền Sát Thủ"
-    type: NECKLACE
-    material: AMETHYST_SHARD
-    model-data: 5102
-    lore:
-      - "&7Sat thu khong can anh sang."
-    stats:
-      bonus-crit-chance: 0.05
-      bonus-crit-damage: 0.10
-    mastery:
-      max-level: 30
-      exp-per-hit: 4
-      bonuses:
-        5:  {bonus-crit-chance: 0.03, description: "Crit Chance +3%"}
-        10: {bonus-crit-damage: 0.10, description: "Crit Damage +10%"}
-        15: {bonus-crit-chance: 0.05, description: "Crit Chance +5%"}
-        20: {bonus-crit-damage: 0.15, description: "Crit Damage +15%"}
-        25: {bonus-crit-chance: 0.08, description: "Crit Chance +8%"}
-        30: {execute-threshold: 0.15, description: "MASTERY: Sat thuong tang 50% khi ke thu duoi 15% HP"}
-
-  # ── CHARM ──────────────────────────────────────────────────────────────────
-
-  CHARM_OF_FORTUNE:
-    display-name: "&6&lBùa May Mắn"
-    type: CHARM
-    material: RABBIT_FOOT
-    model-data: 5201
-    lore:
-      - "&7Bua mang lai van may cho nguoi so huu."
-    stats:
-      bonus-drop-rate: 0.05
-      bonus-exp: 0.05
-    mastery:
-      max-level: 20
-      exp-per-hit: 5
-      bonuses:
-        5:  {bonus-drop-rate: 0.05, description: "Drop rate +5%"}
-        10: {bonus-exp: 0.10,       description: "EXP nhan duoc +10%"}
-        15: {bonus-drop-rate: 0.10, description: "Drop rate +10%"}
-        20: {bonus-money: 0.15,     description: "MASTERY: Coin nhan duoc +15%"}
-
-  CHARM_OF_SPEED:
-    display-name: "&e&lBùa Tốc Độ"
-    type: CHARM
-    material: FEATHER
-    model-data: 5202
-    lore:
-      - "&7Nhe nhu long vu."
-    stats:
-      bonus-speed: 0.02
-      bonus-jump: 1
-    mastery:
-      max-level: 20
-      exp-per-hit: 5
-      bonuses:
-        5:  {bonus-speed: 0.01,  description: "Speed +1"}
-        10: {bonus-jump: 1,      description: "Nhay cao hon"}
-        15: {bonus-speed: 0.02,  description: "Speed +2"}
-        20: {dash-on-hit: true,  description: "MASTERY: 15% co hoi dash nho khi bi danh"}
+      - "&8▪ &7Vai trò: &c[TẠO]"
+      - "&8▪ &7Hệ: &4Huyết Chiến"
+      - ""
+      - "&c✨ Cơ chế:"
+      - "&7Khi lướt (Dash) xuyên qua kẻ địch,"
+      - "&7tạo &c1 Huyết Ấn&7 lên chúng."
+    mechanics:
+      - "BLOOD_MARK_ON_DASH"
+    tradeoffs: []

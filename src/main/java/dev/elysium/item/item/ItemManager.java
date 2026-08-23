@@ -16,7 +16,7 @@ public class ItemManager {
     private final ElysiumItem plugin;
 
     private final Map<String, ElysiumItemData>   itemDataMap   = new LinkedHashMap<>();
-    private final Map<UUID, PlayerItemState>      playerStates  = new HashMap<>();
+    
 
     public static final String ITEM_ID_KEY = "elysium_item_id";
 
@@ -36,80 +36,45 @@ public class ItemManager {
 
     @SuppressWarnings("unchecked")
     private void loadFile(String fileName, ElysiumItemData.ItemCategory category) {
-        File f = new File(plugin.getDataFolder(), fileName);
+        java.io.File f = new java.io.File(plugin.getDataFolder(), fileName);
         if (!f.exists()) plugin.saveResource(fileName, false);
-        YamlConfiguration cfg = YamlConfiguration.loadConfiguration(f);
+        org.bukkit.configuration.file.YamlConfiguration cfg = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(f);
 
-        // Root key: accessories / armors / trophies
         String rootKey = switch (category) {
             case ACCESSORY -> "accessories";
             case ARMOR     -> "armors";
             case TROPHY    -> "trophies";
         };
 
-        ConfigurationSection root = cfg.getConfigurationSection(rootKey);
+        org.bukkit.configuration.ConfigurationSection root = cfg.getConfigurationSection(rootKey);
         if (root == null) return;
 
         for (String id : root.getKeys(false)) {
-            ConfigurationSection sec = root.getConfigurationSection(id);
+            org.bukkit.configuration.ConfigurationSection sec = root.getConfigurationSection(id);
             if (sec == null) continue;
 
-            // Stats
-            ConfigurationSection statsSec = sec.getConfigurationSection("stats");
-            Map<String, Object> stats = statsSec != null ? new HashMap<>(statsSec.getValues(false)) : new HashMap<>();
+            org.bukkit.configuration.ConfigurationSection statsSec = sec.getConfigurationSection("stats");
+            java.util.Map<String, Object> stats = statsSec != null ? new java.util.HashMap<>(statsSec.getValues(false)) : new java.util.HashMap<>();
 
-            // Mastery
-            ConfigurationSection mSec = sec.getConfigurationSection("mastery");
-            ElysiumItemData.MasteryConfig mastery = null;
-            if (mSec != null) {
-                // Ore EXP (trophy only)
-                Map<String, Integer> oreExp = new HashMap<>();
-                ConfigurationSection oreSec = mSec.getConfigurationSection("ore-exp");
-                if (oreSec != null) {
-                    for (String mat : oreSec.getKeys(false)) {
-                        oreExp.put(mat.toUpperCase(), oreSec.getInt(mat));
-                    }
-                }
+            java.util.List<String> mechanics = sec.getStringList("mechanics");
+            java.util.List<String> tradeoffs = sec.getStringList("tradeoffs");
 
-                // Bonuses
-                Map<Integer, ElysiumItemData.BonusUnlock> bonuses = new LinkedHashMap<>();
-                ConfigurationSection bonusSec = mSec.getConfigurationSection("bonuses");
-                if (bonusSec != null) {
-                    for (String lvStr : bonusSec.getKeys(false)) {
-                        try {
-                            int lv = Integer.parseInt(lvStr);
-                            ConfigurationSection bSec = bonusSec.getConfigurationSection(lvStr);
-                            if (bSec == null) continue;
-                            String desc = bSec.getString("description", "");
-                            Map<String, Object> vals = new HashMap<>(bSec.getValues(false));
-                            vals.remove("description");
-                            bonuses.put(lv, new ElysiumItemData.BonusUnlock(desc, vals));
-                        } catch (NumberFormatException ignored) {}
-                    }
-                }
-
-                mastery = new ElysiumItemData.MasteryConfig(
-                        mSec.getInt("max-level", 30),
-                        mSec.getInt("exp-per-hit", 3),
-                        oreExp, bonuses
-                );
-            }
-
-            itemDataMap.put(id, new ElysiumItemData(
+            ElysiumItemData data = new ElysiumItemData(
                     id,
                     sec.getString("display-name", id),
                     category,
-                    sec.getString("type", "UNKNOWN"),
+                    sec.getString("type", ""),
                     sec.getString("material", "STONE"),
+                    sec.getString("color", ""),
                     sec.getInt("model-data", 0),
                     sec.getStringList("lore"),
                     stats,
-                    mastery
-            ));
+                    mechanics,
+                    tradeoffs
+            );
+            itemDataMap.put(id, data);
         }
     }
-
-    // ── Create Item ───────────────────────────────────────────────────────────
 
     public ItemStack createItem(String itemId) {
         ElysiumItemData data = itemDataMap.get(itemId);
@@ -172,51 +137,8 @@ public class ItemManager {
 
     /** Tao item voi Mastery info cua player */
     public ItemStack createItemForPlayer(String itemId, Player player) {
-        ItemStack item = createItem(itemId);
-        if (item == null || player == null) return item;
-
-        ElysiumItemData data = itemDataMap.get(itemId);
-        if (data == null || data.getMastery() == null) return item;
-
-        try {
-            PlayerItemState state = getState(player);
-            int    level   = plugin.getItemMastery().getLevelFromExp(data, state.getExp(itemId));
-            long   totalExp= state.getExp(itemId);
-            long   expNext = plugin.getItemMastery().getExpForNextLevel(data, level);
-            long   expCur  = totalExp - plugin.getItemMastery().getExpForLevel(data, level);
-            double pct     = expNext > 0 ? (expCur / (double) expNext) * 100.0 : 100.0;
-
-            ItemMeta meta = item.getItemMeta();
-            List<String> lore = meta.getLore();
-            if (lore == null) lore = new ArrayList<>();
-
-            // Xoa dong mastery cu
-            lore.removeIf(l -> l.contains("Mastery Level:") || l.contains("EXP:") || l.contains("ID:") || l.contains("──"));
-
-            lore.add(color("&8──────────────"));
-            lore.add(color("&6✦ Mastery: &e" + level + "&7/" + data.getMastery().getMaxLevel()));
-            lore.add(buildExpBar(expCur, expNext, pct));
-
-            // Hien bonus da unlock
-            for (Map.Entry<Integer, ElysiumItemData.BonusUnlock> entry : data.getMastery().getBonuses().entrySet()) {
-                if (level >= entry.getKey()) {
-                    lore.add(color("&a▸ " + entry.getValue().getDescription()));
-                }
-            }
-
-            // Next unlock
-            String next = plugin.getItemMastery().getNextUnlockDesc(data, level);
-            if (next != null) lore.add(color("&7Next: " + next));
-
-            lore.add(color("&8ID: " + itemId));
-            meta.setLore(lore);
-            item.setItemMeta(meta);
-        } catch (Exception ignored) {}
-
-        return item;
+        return createItem(itemId);
     }
-
-    // ── Give ─────────────────────────────────────────────────────────────────
 
     public void giveItem(Player player, String itemId) {
         ItemStack item = createItemForPlayer(itemId, player);
@@ -254,38 +176,6 @@ public class ItemManager {
     /** Kiem tra player co dang mac item nay khong */
     public boolean isEquipped(Player player, String itemId) {
         return getEquippedItemIds(player).contains(itemId);
-    }
-
-    // ── Player State ──────────────────────────────────────────────────────────
-
-    public PlayerItemState getState(Player player) {
-        return playerStates.computeIfAbsent(player.getUniqueId(), PlayerItemState::new);
-    }
-
-    public void removeState(UUID uuid) { playerStates.remove(uuid); }
-
-    /** Cap nhat lore tren item trong inventory sau khi EXP thay doi */
-    public void refreshItemInInventory(Player player, String itemId) {
-        // Main hand
-        ItemStack held = player.getInventory().getItemInMainHand();
-        if (itemId.equals(getItemId(held))) {
-            player.getInventory().setItemInMainHand(createItemForPlayer(itemId, player));
-            return;
-        }
-        // Giap
-        ItemStack[] armor = player.getInventory().getArmorContents();
-        boolean changed = false;
-        for (int i = 0; i < armor.length; i++) {
-            if (itemId.equals(getItemId(armor[i]))) {
-                armor[i] = createItemForPlayer(itemId, player);
-                changed = true;
-            }
-        }
-        if (changed) { player.getInventory().setArmorContents(armor); return; }
-        // Off hand
-        if (itemId.equals(getItemId(player.getInventory().getItemInOffHand()))) {
-            player.getInventory().setItemInOffHand(createItemForPlayer(itemId, player));
-        }
     }
 
     // ── Getters ───────────────────────────────────────────────────────────────
