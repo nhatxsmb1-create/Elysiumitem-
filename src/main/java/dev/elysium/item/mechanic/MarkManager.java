@@ -121,7 +121,7 @@ public class MarkManager {
             double angle = (2 * Math.PI / stacks) * i;
             double x = radius * Math.cos(angle);
             double z = radius * Math.sin(angle);
-            entity.getWorld().spawnParticle(Particle.REDSTONE, loc.clone().add(x, 0, z), 1, dustOptions);
+            entity.getWorld().spawnParticle(Particle.DUST, loc.clone().add(x, 0, z), 1, dustOptions);
         }
     }
 }

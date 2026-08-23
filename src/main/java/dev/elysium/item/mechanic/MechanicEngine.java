@@ -78,7 +78,7 @@ public class MechanicEngine implements Listener {
                         double boom = 50.0 * marks;
                         e.setDamage(e.getDamage() + boom);
                         
-                        target.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_LARGE, target.getLocation(), 1);
+                        target.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION, target.getLocation(), 1);
                         player.sendMessage("§c§l💥 Huyết Ấn Nổ!");
                         
                         plugin.getMarkManager().consumeMarks(target, "BLOOD_MARK");

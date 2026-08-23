@@ -7,6 +7,7 @@ import dev.elysium.item.accessory.AccessoryManager;
 import dev.elysium.item.listener.ArmorListener;
 import dev.elysium.item.mechanic.MechanicEngine;
 import dev.elysium.item.mechanic.MarkManager;
+import dev.elysium.item.mechanic.MarkManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ElysiumItem extends JavaPlugin {
@@ -16,6 +17,7 @@ public class ElysiumItem extends JavaPlugin {
     private ItemManager  itemManager;
     private AccessoryManager  accessoryManager;
     private MechanicEngine mechanicEngine;
+    private MarkManager markManager;
 
     @Override
     public void onEnable() {
@@ -30,6 +32,7 @@ public class ElysiumItem extends JavaPlugin {
         accessoryManager  = new AccessoryManager(this);
         itemManager  = new ItemManager(this);
         mechanicEngine = new MechanicEngine(this);
+        markManager = new MarkManager(this);
 
         // Commands
         getCommand("eitem").setExecutor(new ItemCommand(this));
@@ -53,4 +56,5 @@ public class ElysiumItem extends JavaPlugin {
     public ItemManager        getItemManager()  { return itemManager; }
     public AccessoryManager   getAccessoryManager() { return accessoryManager; }
     public MechanicEngine     getMechanicEngine() { return mechanicEngine; }
+    public MarkManager        getMarkManager()    { return markManager; }
 }
