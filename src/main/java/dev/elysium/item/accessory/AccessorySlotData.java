@@ -3,22 +3,16 @@ package dev.elysium.item.accessory;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Luu trang thai slot accessory cua 1 player.
- * Moi player co 3 slot: RING, NECKLACE, CHARM
- * Moi slot chi chua duoc 1 item ID.
- */
 public class AccessorySlotData {
 
-    public enum SlotType { RING, NECKLACE, CHARM }
+    public enum SlotType { RING_1, RING_2, NECKLACE }
 
-    // SlotType -> itemId dang trang bi (null = trong)
     private final Map<SlotType, String> equipped = new HashMap<>();
 
     public AccessorySlotData() {
-        equipped.put(SlotType.RING,     null);
+        equipped.put(SlotType.RING_1,     null);
+        equipped.put(SlotType.RING_2,     null);
         equipped.put(SlotType.NECKLACE, null);
-        equipped.put(SlotType.CHARM,    null);
     }
 
     public String  getEquipped(SlotType slot)              { return equipped.get(slot); }
@@ -26,12 +20,14 @@ public class AccessorySlotData {
     public void    equip(SlotType slot, String itemId)     { equipped.put(slot, itemId); }
     public void    unequip(SlotType slot)                  { equipped.put(slot, null); }
 
-    /** Kiem tra item nay co dang duoc trang bi khong */
+    public String getNecklaceId() { return getEquipped(SlotType.NECKLACE); }
+    public String getRing1Id() { return getEquipped(SlotType.RING_1); }
+    public String getRing2Id() { return getEquipped(SlotType.RING_2); }
+
     public boolean isItemEquipped(String itemId) {
         return equipped.values().stream().anyMatch(itemId::equals);
     }
 
-    /** Lay slot dang chua item nay */
     public SlotType getSlotOf(String itemId) {
         for (Map.Entry<SlotType, String> e : equipped.entrySet()) {
             if (itemId.equals(e.getValue())) return e.getKey();
@@ -39,7 +35,6 @@ public class AccessorySlotData {
         return null;
     }
 
-    /** Serialize de luu DB: "RING:RING_OF_WARRIOR,NECKLACE:null,CHARM:CHARM_OF_SPEED" */
     public String serialize() {
         StringBuilder sb = new StringBuilder();
         for (SlotType slot : SlotType.values()) {

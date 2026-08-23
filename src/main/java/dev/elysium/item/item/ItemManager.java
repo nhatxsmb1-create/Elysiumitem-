@@ -114,11 +114,6 @@ public class ItemManager {
         }
 
         lore.add("");
-        if (data.getMastery() != null) {
-            lore.add(color("&8── Mastery ──"));
-            lore.add(color("&6Mastery Level: &e0/" + data.getMastery().getMaxLevel()));
-            lore.add(color("&7EXP: &f0/100"));
-        }
 
         lore.add("");
         lore.add(color("&8ID: " + itemId));

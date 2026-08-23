@@ -71,7 +71,7 @@ public class ArmorListener implements Listener {
         if (speed > 1.0f) speed = 1.0f;
         if (speed < 0.01f) speed = 0.01f;
 
-        var attr = player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH);
+        var attr = player.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH);
         if (attr != null) {
             attr.setBaseValue(maxHp);
             if (player.getHealth() > maxHp) player.setHealth(maxHp);
