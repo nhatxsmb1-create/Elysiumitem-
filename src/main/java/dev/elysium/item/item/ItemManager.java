@@ -105,6 +105,12 @@ public class ItemManager {
         data.getLore().forEach(l -> lore.add(color(l)));
         lore.add("");
 
+        if (data.getCategory() == ElysiumItemData.ItemCategory.ACCESSORY) {
+            lore.add("");
+            lore.add(color("&e[Hướng dẫn] &fGõ lệnh &a/trangbi"));
+            lore.add(color("&fđể gắn mảnh ghép này vào người."));
+        }
+        
         // Stats - format dep
         if (!data.getStats().isEmpty()) {
             lore.add(color("&8&m              "));
