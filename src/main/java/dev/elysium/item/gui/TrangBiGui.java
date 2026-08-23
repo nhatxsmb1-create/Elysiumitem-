@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 
 public class TrangBiGui extends ElysiumGui {
     private final ElysiumItem plugin;
