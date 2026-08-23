@@ -5,8 +5,10 @@ import dev.elysium.core.gui.GuiButton;
 import dev.elysium.core.gui.ItemBuilder;
 import dev.elysium.item.ElysiumItem;
 import dev.elysium.item.accessory.AccessorySlotData;
+import dev.elysium.item.item.ElysiumItemData;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -36,7 +38,7 @@ public class TrangBiGui extends ElysiumGui {
 
         AccessorySlotData slotData = plugin.getAccessoryManager().getSlotData(player.getUniqueId());
         
-        // Player Stats Head (Slot 4)
+        // Player Stats Head
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         if (meta != null) {
@@ -61,16 +63,19 @@ public class TrangBiGui extends ElysiumGui {
         // Slot 20: Dây chuyền
         setButton(20, new GuiButton(getSlotItem(slotData.getNecklaceId(), "Dây Chuyền", Material.CHAIN), e -> {
             e.setCancelled(true);
+            handleSlotClick(player, e, AccessorySlotData.SlotType.NECKLACE, "NECKLACE", slotData);
         }));
         
         // Slot 22: Nhẫn 1
         setButton(22, new GuiButton(getSlotItem(slotData.getRing1Id(), "Nhẫn 1", Material.GOLD_NUGGET), e -> {
             e.setCancelled(true);
+            handleSlotClick(player, e, AccessorySlotData.SlotType.RING_1, "RING", slotData);
         }));
         
         // Slot 24: Nhẫn 2
         setButton(24, new GuiButton(getSlotItem(slotData.getRing2Id(), "Nhẫn 2", Material.GOLD_NUGGET), e -> {
             e.setCancelled(true);
+            handleSlotClick(player, e, AccessorySlotData.SlotType.RING_2, "RING", slotData);
         }));
         
         // Slot 31: Close
@@ -80,12 +85,58 @@ public class TrangBiGui extends ElysiumGui {
         }));
     }
 
+    private void handleSlotClick(Player player, InventoryClickEvent e, AccessorySlotData.SlotType slotType, String requiredSubType, AccessorySlotData slotData) {
+        ItemStack cursor = e.getCursor();
+        String currentEquipped = slotData.getEquipped(slotType);
+
+        boolean cursorHasItem = cursor != null && cursor.getType() != Material.AIR;
+        
+        if (cursorHasItem) {
+            String cursorId = plugin.getItemManager().getItemId(cursor);
+            if (cursorId == null) {
+                player.sendMessage("§cĐây không phải là trang bị Elysium!");
+                return;
+            }
+            
+            ElysiumItemData data = plugin.getItemManager().getItemData(cursorId);
+            if (data == null || !data.getSubType().equalsIgnoreCase(requiredSubType)) {
+                player.sendMessage("§cTrang bị này không thể lắp vào ô " + requiredSubType + "!");
+                return;
+            }
+
+            // Equip the item
+            slotData.equip(slotType, cursorId);
+            
+            // If there was an old item, give it back (or put on cursor)
+            if (currentEquipped != null) {
+                ItemStack oldItem = plugin.getItemManager().createItem(currentEquipped);
+                e.getView().setCursor(oldItem);
+            } else {
+                e.getView().setCursor(new ItemStack(Material.AIR));
+            }
+            player.sendMessage("§aĐã trang bị §f" + data.getDisplayName());
+            
+        } else {
+            // Unequip
+            if (currentEquipped != null) {
+                ItemStack oldItem = plugin.getItemManager().createItem(currentEquipped);
+                e.getView().setCursor(oldItem);
+                slotData.unequip(slotType);
+                player.sendMessage("§aĐã tháo trang bị!");
+            }
+        }
+        
+        // Refresh GUI
+        buttons.clear();
+        inventory.clear();
+        build(player);
+    }
+
     private ItemStack getSlotItem(String itemId, String slotName, Material defaultMat) {
         if (itemId == null || itemId.isEmpty()) {
-            ItemStack empty = new ItemBuilder(defaultMat).name("§7[Trống] §f" + slotName)
-                .lore("§7Kéo thả trang bị vào đây", "§7để kích hoạt cơ chế.")
+            return new ItemBuilder(defaultMat).name("§7[Trống] §f" + slotName)
+                .lore("§7Click mang trang bị ở trỏ chuột", "§7vào đây để kích hoạt cơ chế.", "", "§e[Click] §fđể thao tác")
                 .build();
-            return empty;
         }
         return plugin.getItemManager().createItem(itemId);
     }

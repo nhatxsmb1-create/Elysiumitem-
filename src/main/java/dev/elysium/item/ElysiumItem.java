@@ -6,6 +6,7 @@ import dev.elysium.item.item.ItemManager;
 import dev.elysium.item.accessory.AccessoryManager;
 import dev.elysium.item.listener.ArmorListener;
 import dev.elysium.item.mechanic.MechanicEngine;
+import dev.elysium.item.mechanic.MarkManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ElysiumItem extends JavaPlugin {
