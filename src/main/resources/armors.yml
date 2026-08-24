@@ -12,9 +12,6 @@ armors:
       - "&c✨ Cơ chế:"
       - "&7Mỗi &c1 Huyết Ấn&7 trên kẻ địch giúp"
       - "&7đòn đánh của bạn tăng &c3% Sát Thương&7."
-      - ""
-      - "&4⚠ Đánh đổi:"
-      - "&7Giảm 30% hiệu quả hồi máu."
     mechanics:
       - "DAMAGE_PER_BLOOD_MARK:3"
     tradeoffs:
@@ -34,9 +31,6 @@ armors:
       - "&7Khi kẻ địch đạt &c5 Huyết Ấn&7,"
       - "&7lướt (Dash) xuyên qua sẽ thiêu đốt toàn"
       - "&7bộ Ấn tạo vụ nổ gây Sát thương cực lớn."
-      - ""
-      - "&4⚠ Đánh đổi:"
-      - "&7Nhận thêm 15% Sát thương từ kẻ địch."
     mechanics:
       - "CONSUME_BLOOD_MARK_ON_DASH"
     tradeoffs:
