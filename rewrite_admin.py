@@ -1,4 +1,6 @@
-package dev.elysium.item.command;
+import os
+
+code = """package dev.elysium.item.command;
 
 import dev.elysium.item.ElysiumItem;
 import dev.elysium.item.gui.AdminGui;
@@ -73,3 +75,6 @@ public class AdminCommand implements CommandExecutor {
         return true;
     }
 }
+"""
+with open('src/main/java/dev/elysium/item/command/AdminCommand.java', 'w', encoding='utf-8') as f:
+    f.write(code)
