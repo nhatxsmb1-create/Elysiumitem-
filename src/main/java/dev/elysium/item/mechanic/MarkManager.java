@@ -1,8 +1,6 @@
 package dev.elysium.item.mechanic;
 
 import dev.elysium.item.ElysiumItem;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -30,7 +28,6 @@ public class MarkManager {
         }
     }
 
-    // Dùng ConcurrentHashMap để Thread-safe 100%
     private final Map<UUID, Map<String, MarkData>> entityMarks = new ConcurrentHashMap<>();
 
     public MarkManager(ElysiumItem plugin) {
@@ -56,8 +53,7 @@ public class MarkManager {
                 if (i < data.stacks) sb.append("§c♦");
                 else sb.append("§7♢");
             }
-            attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, 
-                new TextComponent("§c🩸 Huyết Ấn trên mục tiêu: " + sb.toString()));
+            attacker.sendTitle(" ", "§c🩸 Huyết Ấn: " + sb.toString(), 0, 40, 10);
         }
     }
     
@@ -88,17 +84,14 @@ public class MarkManager {
                     UUID uuid = entry.getKey();
                     Map<String, MarkData> marks = entry.getValue();
                     
-                    // 1. Tự động xóa ấn đã hết hạn (Tối ưu RAM)
                     marks.entrySet().removeIf(m -> now > m.getValue().expireTime);
                     
-                    // 2. Nếu quái vật không còn ấn nào -> Dọn dẹp sạch sẽ khỏi RAM
                     if (marks.isEmpty()) {
                         it.remove();
                         continue;
                     }
                     
                     Entity entity = plugin.getServer().getEntity(uuid);
-                    // 3. Nếu quái vật đã chết hoặc despawn -> Xóa khỏi RAM
                     if (!(entity instanceof LivingEntity) || entity.isDead()) {
                         it.remove();
                         continue; 
@@ -109,7 +102,7 @@ public class MarkManager {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, 10L); // 10 tick = 0.5s -> Cực kỳ nhẹ, không chạy mỗi tick
+        }.runTaskTimer(plugin, 0L, 10L);
     }
 
     private void spawnBloodParticles(LivingEntity entity, int stacks) {

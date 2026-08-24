@@ -2,8 +2,7 @@ armors:
   GIAP_CUONG_HUYET:
     display-name: "&4&lGiáp Cuồng Huyết"
     type: CHESTPLATE
-    material: LEATHER_CHESTPLATE
-    color: "#8B0000"
+    material: NETHERITE_CHESTPLATE
     model-data: 4101
     lore:
       - "&8▪ &7Vai trò: &e[TÍCH]"
@@ -14,14 +13,14 @@ armors:
       - "&7đòn đánh của bạn tăng &c3% Sát Thương&7."
     mechanics:
       - "DAMAGE_PER_BLOOD_MARK:3"
+      - "BLOOD_MARK_ON_DASH"
     tradeoffs:
       - "HEAL_REDUCTION:30"
   
   GIAY_TE_HUYET:
     display-name: "&c&lGiày Tế Huyết"
     type: BOOTS
-    material: LEATHER_BOOTS
-    color: "#8B0000"
+    material: NETHERITE_BOOTS
     model-data: 4102
     lore:
       - "&8▪ &7Vai trò: &b[KÍCH HOẠT]"
