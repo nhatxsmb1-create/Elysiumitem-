@@ -30,9 +30,9 @@ public class ElysiumItem extends JavaPlugin implements Listener {
         saveResource("armors.yml",   false);
         saveResource("config.yml",   false);
 
-        // Init
-        accessoryManager  = new AccessoryManager(this);
+        // Init - Thu tu quan trong: itemManager phai duoc khoi tao truoc accessoryManager
         itemManager  = new ItemManager(this);
+        accessoryManager  = new AccessoryManager(this);
         mechanicEngine = new MechanicEngine(this);
         markManager = new MarkManager(this);
 

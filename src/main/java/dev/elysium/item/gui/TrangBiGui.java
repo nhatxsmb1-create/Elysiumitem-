@@ -115,6 +115,18 @@ public class TrangBiGui extends ElysiumGui {
         }
         
         ItemStack item = plugin.getItemManager().createItem(itemId);
+        if (item == null) {
+            // Item ID da duoc luu nhung khong con ton tai trong config -> hien slot rong
+            return new ItemBuilder(defaultMat).name("§7[Trống] §f" + slotName)
+                .lore(
+                    "",
+                    "§cMón đồ §e" + itemId + " §ckhông còn tồn tại.",
+                    "§7Hãy tháo ra và trang bị lại.",
+                    "",
+                    "§e[Click] §fđể tháo."
+                )
+                .build();
+        }
         org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.getLore();
         if (lore == null) lore = new ArrayList<>();
