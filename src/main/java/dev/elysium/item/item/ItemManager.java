@@ -90,6 +90,7 @@ public class ItemManager {
     }
     
     public Set<String> getItemIds() { return itemDataMap.keySet(); }
+    public Map<String, ElysiumItemData> getAllItems() { return itemDataMap; }
 
     public ItemStack createItem(String itemId) {
         ElysiumItemData data = getItemData(itemId);
@@ -130,9 +131,9 @@ public class ItemManager {
             meta.setCustomModelData(data.getModelData());
         }
 
-        if (data.getColorHex() != null && meta instanceof org.bukkit.inventory.meta.LeatherArmorMeta lam) {
+        if (data.getColor() != null && meta instanceof org.bukkit.inventory.meta.LeatherArmorMeta lam) {
             try {
-                java.awt.Color c = java.awt.Color.decode(data.getColorHex());
+                java.awt.Color c = java.awt.Color.decode(data.getColor());
                 lam.setColor(org.bukkit.Color.fromRGB(c.getRed(), c.getGreen(), c.getBlue()));
             } catch (Exception ignored) {}
         }
