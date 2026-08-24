@@ -11,7 +11,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ItemManager {
 
@@ -33,7 +32,6 @@ public class ItemManager {
         plugin.getLogger().info("Loaded " + itemDataMap.size() + " Elysium item(s).");
     }
 
-    @SuppressWarnings("unchecked")
     private void loadFile(String fileName, ElysiumItemData.ItemCategory category) {
         File f = new File(plugin.getDataFolder(), fileName);
         if (!f.exists()) plugin.saveResource(fileName, false);
@@ -52,37 +50,35 @@ public class ItemManager {
             ConfigurationSection sec = root.getConfigurationSection(id);
             if (sec == null) continue;
 
-            ElysiumItemData data = new ElysiumItemData();
-            data.setId(id);
-            data.setCategory(category);
-            data.setDisplayName(sec.getString("display-name", id));
-            data.setSubType(sec.getString("type", "UNKNOWN"));
-            data.setMaterial(sec.getString("material", "STONE"));
-            data.setColorHex(sec.getString("color", null));
-            data.setModelData(sec.getInt("model-data", 0));
-            data.setUnbreakable(sec.getBoolean("unbreakable", false));
-            data.setLore(sec.getStringList("lore"));
-            data.setMechanics(sec.getStringList("mechanics"));
-            data.setTradeoffs(sec.getStringList("tradeoffs"));
-            data.setHideTooltip(sec.getBoolean("hide-tooltip", false));
-            
-            List<String> flags = sec.getStringList("hide-flags");
-            for (String fl : flags) {
-                try { data.getHideFlags().add(ItemFlag.valueOf(fl)); } catch (Exception ignored) {}
-            }
-
             ConfigurationSection statsSec = sec.getConfigurationSection("stats");
+            Map<String, Object> stats = new HashMap<>();
             if (statsSec != null) {
                 for (String k : statsSec.getKeys(false)) {
-                    data.getStats().put(k, statsSec.get(k));
+                    stats.put(k, statsSec.get(k));
                 }
             }
+
+            ElysiumItemData data = new ElysiumItemData(
+                id,
+                sec.getString("display-name", id),
+                category,
+                sec.getString("type", "UNKNOWN"),
+                sec.getString("material", "STONE"),
+                sec.getString("color", null),
+                sec.getInt("model-data", 0),
+                sec.getStringList("lore"),
+                stats,
+                sec.getStringList("mechanics"),
+                sec.getStringList("tradeoffs")
+            );
+
             itemDataMap.put(id, data);
         }
     }
 
     public ElysiumItemData getItemData(String id) { return itemDataMap.get(id); }
     public Map<String, ElysiumItemData> getAllItems() { return Collections.unmodifiableMap(itemDataMap); }
+    public Set<String> getItemIds() { return itemDataMap.keySet(); }
 
     public ItemStack createItem(String itemId) {
         ElysiumItemData data = itemDataMap.get(itemId);
@@ -98,20 +94,18 @@ public class ItemManager {
 
         meta.setDisplayName(color(data.getDisplayName()));
 
-        if (data.isUnbreakable()) meta.setUnbreakable(true);
         if (data.getModelData() > 0) meta.setCustomModelData(data.getModelData());
-        if (data.isHideTooltip()) meta.setHideTooltip(true);
 
-        if (meta instanceof org.bukkit.inventory.meta.LeatherArmorMeta lam && data.getColorHex() != null) {
+        if (meta instanceof org.bukkit.inventory.meta.LeatherArmorMeta lam && data.getColor() != null) {
             try {
-                java.awt.Color c = java.awt.Color.decode(data.getColorHex());
+                java.awt.Color c = java.awt.Color.decode(data.getColor());
                 lam.setColor(org.bukkit.Color.fromRGB(c.getRed(), c.getGreen(), c.getBlue()));
             } catch (Exception ignored) {}
         }
 
-        for (ItemFlag flag : data.getHideFlags()) {
-            meta.addItemFlags(flag);
-        }
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        meta.setUnbreakable(true);
 
         List<String> lore = new ArrayList<>();
         String typeBadge = buildTypeBadge(data);
@@ -200,11 +194,11 @@ public class ItemManager {
             if (id != null) list.add(id);
         }
 
-        Map<dev.elysium.item.accessory.AccessorySlot, String> slots = 
-            plugin.getAccessoryManager().getSlotData(player.getUniqueId()).getSlots();
-        for (String accId : slots.values()) {
-            if (accId != null) list.add(accId);
-        }
+        var slotData = plugin.getAccessoryManager().getSlotData(player.getUniqueId());
+        if (slotData.getNecklaceId() != null) list.add(slotData.getNecklaceId());
+        if (slotData.getRing1Id() != null) list.add(slotData.getRing1Id());
+        if (slotData.getRing2Id() != null) list.add(slotData.getRing2Id());
+        
         return list;
     }
 
