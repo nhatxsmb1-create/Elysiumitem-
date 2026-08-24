@@ -127,7 +127,7 @@ public class ItemManager {
         }
 
         lore.add("");
-        lore.add(color("&a[!] Mặc vào người để kích hoạt"));
+        lore.add(color("&a[!] Dùng lệnh &f/trangbi &ađể mặc vào người"));
         lore.add(color("&8ID: " + data.getId().toUpperCase()));
 
         meta.setLore(lore);
