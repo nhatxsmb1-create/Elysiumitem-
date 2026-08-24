@@ -7,10 +7,12 @@ import dev.elysium.item.accessory.AccessoryManager;
 import dev.elysium.item.listener.ArmorListener;
 import dev.elysium.item.mechanic.MechanicEngine;
 import dev.elysium.item.mechanic.MarkManager;
-import dev.elysium.item.mechanic.MarkManager;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class ElysiumItem extends JavaPlugin {
+public class ElysiumItem extends JavaPlugin implements Listener {
 
     private static ElysiumItem instance;
 
@@ -42,6 +44,7 @@ public class ElysiumItem extends JavaPlugin {
         // Listeners
         getServer().getPluginManager().registerEvents(new ArmorListener(this),   this);
         getServer().getPluginManager().registerEvents(new dev.elysium.item.mechanic.MechanicListener(this), this);
+        getServer().getPluginManager().registerEvents(this, this);
 
         getLogger().info("=== ElysiumItem v" + getDescription().getVersion() + " enabled! ===");
         getLogger().info("Items loaded: " + itemManager.getItemIds().size());
@@ -49,7 +52,17 @@ public class ElysiumItem extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (accessoryManager != null) {
+            accessoryManager.saveAll();
+        }
         getLogger().info("ElysiumItem disabled.");
+    }
+    
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        if (accessoryManager != null) {
+            accessoryManager.removeSlots(e.getPlayer().getUniqueId());
+        }
     }
 
     public static ElysiumItem getInstance() { return instance; }
