@@ -26,9 +26,7 @@ public class MechanicEngine implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
     
-    @EventHandler
-    public void onPlayerDash(dev.elysium.core.event.ElysiumDashEvent event) {
-        Player player = event.getPlayer();
+    public void onPlayerDash(Player player) {
         List<String> equipped = plugin.getItemManager().getEquippedItemIds(player);
         for (String id : equipped) {
             ElysiumItemData data = plugin.getItemManager().getItemData(id);
