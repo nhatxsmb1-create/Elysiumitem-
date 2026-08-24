@@ -53,6 +53,7 @@ public class ArmorListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        plugin.getItemManager().updatePlayerInventory(e.getPlayer());
         updateStats(e.getPlayer());
     }
 

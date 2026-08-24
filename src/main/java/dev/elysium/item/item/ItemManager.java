@@ -26,10 +26,28 @@ public class ItemManager {
 
     public void loadAll() {
         itemDataMap.clear();
-        loadFile("items.yml",    ElysiumItemData.ItemCategory.ACCESSORY);
-        loadFile("armors.yml",   ElysiumItemData.ItemCategory.ARMOR);
+        loadFile("items.yml", ElysiumItemData.ItemCategory.ACCESSORY);
+        loadFile("armors.yml", ElysiumItemData.ItemCategory.ARMOR);
         loadFile("trophies.yml", ElysiumItemData.ItemCategory.TROPHY);
         plugin.getLogger().info("Loaded " + itemDataMap.size() + " Elysium item(s).");
+        for (Player p : org.bukkit.Bukkit.getOnlinePlayers()) {
+            updatePlayerInventory(p);
+        }
+    }
+
+    public void updatePlayerInventory(Player player) {
+        org.bukkit.inventory.Inventory inv = player.getInventory();
+        for (int i = 0; i < inv.getSize(); i++) {
+            ItemStack item = inv.getItem(i);
+            String id = getItemId(item);
+            if (id != null && itemDataMap.containsKey(id)) {
+                ItemStack updated = createItemForPlayer(id, player);
+                if (updated != null) {
+                    updated.setAmount(item.getAmount());
+                    inv.setItem(i, updated);
+                }
+            }
+        }
     }
 
     private void loadFile(String fileName, ElysiumItemData.ItemCategory category) {
@@ -109,21 +127,21 @@ public class ItemManager {
 
         List<String> lore = new ArrayList<>();
         String typeBadge = buildTypeBadge(data);
-        lore.add(color("&f&l« " + typeBadge + "&f&l »"));
+        lore.add(color("&f&lÂ« " + typeBadge + "&f&l Â»"));
         lore.add("");
 
         if (!data.getStats().isEmpty()) {
-            lore.add(color("&e&l✦ &6&lCHỈ SỐ TĂNG THÊM &e&l✦"));
+            lore.add(color("&e&lâœ¦ &6&lCHá»ˆ Sá» TÄ‚NG THĂM &e&lâœ¦"));
             for (Map.Entry<String, Object> e : data.getStats().entrySet()) {
-                lore.add(color("  &8▪ " + formatStat(e.getKey(), e.getValue())));
+                lore.add(color("  &8â–ª " + formatStat(e.getKey(), e.getValue())));
             }
             lore.add("");
         }
 
         if (!data.getTradeoffs().isEmpty()) {
-            lore.add(color("&4&l[!] &c&lĐÁNH ĐỔI &4&l[!]"));
+            lore.add(color("&4&l[!] &c&lÄĂNH Äá»”I &4&l[!]"));
             for (String t : data.getTradeoffs()) {
-                lore.add(color("  &8▪ &c" + translateTradeoff(t)));
+                lore.add(color("  &8â–ª &c" + translateTradeoff(t)));
             }
             lore.add("");
         }
@@ -133,11 +151,11 @@ public class ItemManager {
 
         if (data.getCategory() == ElysiumItemData.ItemCategory.ACCESSORY) {
             lore.add(color("&8&m                                  "));
-            lore.add(color("&a&l[!] &aGõ lệnh &f/trangbi &ađể sử dụng"));
+            lore.add(color("&a&l[!] &aGĂµ lá»‡nh &f/trangbi &aÄ‘á»ƒ sá»­ dá»¥ng"));
             lore.add(color("&8&m                                  "));
         } else if (data.getCategory() == ElysiumItemData.ItemCategory.ARMOR) {
             lore.add(color("&8&m                                  "));
-            lore.add(color("&a&l[!] &aMặc vào người để kích hoạt"));
+            lore.add(color("&a&l[!] &aMáº·c vĂ o ngÆ°á»i Ä‘á»ƒ kĂ­ch hoáº¡t"));
             lore.add(color("&8&m                                  "));
         }
         
@@ -204,14 +222,14 @@ public class ItemManager {
 
     private String buildTypeBadge(ElysiumItemData data) {
         String icon = switch (data.getSubType()) {
-            case "RING"       -> "💍 &7Nhẫn";
-            case "NECKLACE"   -> "📿 &7Dây Chuyền";
-            case "CHARM"      -> "🍀 &7Bùa";
-            case "HELMET"     -> "⛑ &7Mũ Giáp";
-            case "CHESTPLATE" -> "🛡 &7Giáp Ngực";
-            case "LEGGINGS"   -> "🩲 &7Quần Giáp";
-            case "BOOTS"      -> "👟 &7Giày Giáp";
-            case "TROPHY"     -> "🏆 &7Cúp Đặc Biệt";
+            case "RING"       -> "đŸ’ &7Nháº«n";
+            case "NECKLACE"   -> "đŸ“¿ &7DĂ¢y Chuyá»n";
+            case "CHARM"      -> "đŸ€ &7BĂ¹a";
+            case "HELMET"     -> "â›‘ &7MÅ© GiĂ¡p";
+            case "CHESTPLATE" -> "đŸ›¡ &7GiĂ¡p Ngá»±c";
+            case "LEGGINGS"   -> "đŸ©² &7Quáº§n GiĂ¡p";
+            case "BOOTS"      -> "đŸ‘Ÿ &7GiĂ y GiĂ¡p";
+            case "TROPHY"     -> "đŸ† &7CĂºp Äáº·c Biá»‡t";
             default           -> "&7" + data.getSubType();
         };
         return "&8[" + icon + "&8]";
@@ -226,44 +244,44 @@ public class ItemManager {
 
     private String getStatIcon(String key) {
         return switch (key) {
-            case "bonus-hp"           -> "&c❤";
-            case "bonus-defense"      -> "&7🛡";
-            case "bonus-mana"         -> "&b✦";
-            case "bonus-mana-regen"   -> "&b⟳";
-            case "bonus-speed"        -> "&e⚡";
-            case "bonus-jump"         -> "&a↑";
-            case "bonus-drop-rate"    -> "&6◈";
-            case "bonus-exp"          -> "&a★";
-            case "bonus-crit-chance"  -> "&c⚔";
-            case "bonus-crit-damage"  -> "&c💥";
-            case "damage-reduce"      -> "&a🛡";
-            case "knockback-resist"   -> "&7↩";
-            case "dodge-chance"       -> "&5◎";
-            case "mining-speed"       -> "&6⛏";
+            case "bonus-hp"           -> "&câ¤";
+            case "bonus-defense"      -> "&7đŸ›¡";
+            case "bonus-mana"         -> "&bâœ¦";
+            case "bonus-mana-regen"   -> "&bâŸ³";
+            case "bonus-speed"        -> "&eâ¡";
+            case "bonus-jump"         -> "&aâ†‘";
+            case "bonus-drop-rate"    -> "&6â—ˆ";
+            case "bonus-exp"          -> "&aâ˜…";
+            case "bonus-crit-chance"  -> "&câ”";
+            case "bonus-crit-damage"  -> "&cđŸ’¥";
+            case "damage-reduce"      -> "&ađŸ›¡";
+            case "knockback-resist"   -> "&7â†©";
+            case "dodge-chance"       -> "&5â—";
+            case "mining-speed"       -> "&6â›";
             case "fall-damage-reduce" -> "&aV";
-            case "fire-resist"        -> "&c🔥";
-            default                   -> "&7▪";
+            case "fire-resist"        -> "&cđŸ”¥";
+            default                   -> "&7â–ª";
         };
     }
 
     private String getStatDisplayName(String key) {
         return switch (key) {
             case "bonus-hp"           -> "HP";
-            case "bonus-defense"      -> "Phòng Thủ";
+            case "bonus-defense"      -> "PhĂ²ng Thá»§";
             case "bonus-mana"         -> "Mana";
             case "bonus-mana-regen"   -> "Mana Regen";
-            case "bonus-speed"        -> "Tốc Độ";
-            case "bonus-jump"         -> "Nhảy";
+            case "bonus-speed"        -> "Tá»‘c Äá»™";
+            case "bonus-jump"         -> "Nháº£y";
             case "bonus-drop-rate"    -> "Drop Rate";
             case "bonus-exp"          -> "EXP Bonus";
             case "bonus-crit-chance"  -> "Crit Chance";
             case "bonus-crit-damage"  -> "Crit Damage";
-            case "damage-reduce"      -> "Giảm Sát Thương";
-            case "knockback-resist"   -> "Kháng Knockback";
-            case "dodge-chance"       -> "Tỉ Lệ Né";
-            case "mining-speed"       -> "Tốc Độ Đào";
-            case "fall-damage-reduce" -> "Giảm Dame Rơi";
-            case "fire-resist"        -> "Kháng Lửa";
+            case "damage-reduce"      -> "Giáº£m SĂ¡t ThÆ°Æ¡ng";
+            case "knockback-resist"   -> "KhĂ¡ng Knockback";
+            case "dodge-chance"       -> "Tá»‰ Lá»‡ NĂ©";
+            case "mining-speed"       -> "Tá»‘c Äá»™ ÄĂ o";
+            case "fall-damage-reduce" -> "Giáº£m Dame RÆ¡i";
+            case "fire-resist"        -> "KhĂ¡ng Lá»­a";
             default                   -> key;
         };
     }
@@ -285,11 +303,11 @@ public class ItemManager {
     private String translateTradeoff(String t) {
         if (t.startsWith("HEAL_REDUCTION")) {
             String[] parts = t.split(":");
-            return "Giảm " + (parts.length > 1 ? parts[1] : "0") + "% Khả năng hồi máu";
+            return "Giáº£m " + (parts.length > 1 ? parts[1] : "0") + "% Kháº£ nÄƒng há»“i mĂ¡u";
         }
         if (t.startsWith("INCOMING_DAMAGE_INCREASE")) {
             String[] parts = t.split(":");
-            return "Nhận thêm " + (parts.length > 1 ? parts[1] : "0") + "% Sát thương từ kẻ địch";
+            return "Nháº­n thĂªm " + (parts.length > 1 ? parts[1] : "0") + "% SĂ¡t thÆ°Æ¡ng tá»« káº» Ä‘á»‹ch";
         }
         return t;
     }
