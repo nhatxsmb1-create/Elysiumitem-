@@ -8,20 +8,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
 import java.io.File;
 import java.util.*;
 
 public class ItemManager {
 
     private final ElysiumItem plugin;
-    private final Map<String, ElysiumItemData> itemDataMap = new HashMap<>();
-
     public static final String ITEM_ID_KEY = "elysium_item_id";
+
+    private final Map<String, ElysiumItemData> itemDataMap = new HashMap<>();
 
     public ItemManager(ElysiumItem plugin) {
         this.plugin = plugin;
-        loadAll();
     }
 
     public void loadAll() {
@@ -52,20 +50,14 @@ public class ItemManager {
 
     private void loadFile(String fileName, ElysiumItemData.ItemCategory category) {
         File f = new File(plugin.getDataFolder(), fileName);
-        if (!f.exists()) plugin.saveResource(fileName, false);
-        YamlConfiguration cfg = YamlConfiguration.loadConfiguration(f);
+        if (!f.exists()) return;
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
 
-        String rootKey = switch (category) {
-            case ACCESSORY -> "accessories";
-            case ARMOR     -> "armors";
-            case TROPHY    -> "trophies";
-        };
+        ConfigurationSection itemsSec = config.getConfigurationSection(category.name().toLowerCase() + "s");
+        if (itemsSec == null) return;
 
-        ConfigurationSection root = cfg.getConfigurationSection(rootKey);
-        if (root == null) return;
-
-        for (String id : root.getKeys(false)) {
-            ConfigurationSection sec = root.getConfigurationSection(id);
+        for (String id : itemsSec.getKeys(false)) {
+            ConfigurationSection sec = itemsSec.getConfigurationSection(id);
             if (sec == null) continue;
 
             ConfigurationSection statsSec = sec.getConfigurationSection("stats");
@@ -89,22 +81,22 @@ public class ItemManager {
                 sec.getStringList("mechanics"),
                 sec.getStringList("tradeoffs")
             );
-
-            itemDataMap.put(id, data);
+            itemDataMap.put(id.toUpperCase(), data);
         }
     }
 
-    public ElysiumItemData getItemData(String id) { return itemDataMap.get(id); }
-    public Map<String, ElysiumItemData> getAllItems() { return Collections.unmodifiableMap(itemDataMap); }
+    public ElysiumItemData getItemData(String id) {
+        return id == null ? null : itemDataMap.get(id.toUpperCase());
+    }
+    
     public Set<String> getItemIds() { return itemDataMap.keySet(); }
 
     public ItemStack createItem(String itemId) {
-        ElysiumItemData data = itemDataMap.get(itemId);
+        ElysiumItemData data = getItemData(itemId);
         if (data == null) return null;
 
-        Material mat;
-        try { mat = Material.valueOf(data.getMaterial()); }
-        catch (Exception e) { mat = Material.STONE; }
+        Material mat = Material.matchMaterial(data.getMaterial().toUpperCase());
+        if (mat == null) mat = Material.STONE;
 
         ItemStack item = new ItemStack(mat);
         ItemMeta meta = item.getItemMeta();
@@ -112,61 +104,44 @@ public class ItemManager {
 
         meta.setDisplayName(color(data.getDisplayName()));
 
-        if (data.getModelData() > 0) meta.setCustomModelData(data.getModelData());
+        List<String> lore = new ArrayList<>();
+        lore.add(color("&8« &7[&8" + buildTypeBadge(data) + "&7] &8»"));
+        lore.add("");
 
-        if (meta instanceof org.bukkit.inventory.meta.LeatherArmorMeta lam && data.getColor() != null) {
+        if (!data.getTradeoffs().isEmpty()) {
+            lore.add(color("&c[!] ĐÁNH ĐỔI [!]"));
+            for (String t : data.getTradeoffs()) {
+                lore.add(color(" &8- &c" + formatTradeoff(t)));
+            }
+            lore.add("");
+        }
+
+        for (String l : data.getLore()) {
+            lore.add(color(l));
+        }
+
+        lore.add("");
+        lore.add(color("&a[!] Mặc vào người để kích hoạt"));
+        lore.add(color("&8ID: " + data.getId().toUpperCase()));
+
+        meta.setLore(lore);
+        
+        if (data.getModelData() > 0) {
+            meta.setCustomModelData(data.getModelData());
+        }
+
+        if (data.getColorHex() != null && meta instanceof org.bukkit.inventory.meta.LeatherArmorMeta lam) {
             try {
-                java.awt.Color c = java.awt.Color.decode(data.getColor());
+                java.awt.Color c = java.awt.Color.decode(data.getColorHex());
                 lam.setColor(org.bukkit.Color.fromRGB(c.getRed(), c.getGreen(), c.getBlue()));
             } catch (Exception ignored) {}
         }
-
-        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        meta.setUnbreakable(true);
-
-        List<String> lore = new ArrayList<>();
-        String typeBadge = buildTypeBadge(data);
-        lore.add(color("&f&lÂ« " + typeBadge + "&f&l Â»"));
-        lore.add("");
-
-        if (!data.getStats().isEmpty()) {
-            lore.add(color("&e&lâœ¦ &6&lCHá»ˆ Sá» TÄ‚NG THĂM &e&lâœ¦"));
-            for (Map.Entry<String, Object> e : data.getStats().entrySet()) {
-                lore.add(color("  &8â–ª " + formatStat(e.getKey(), e.getValue())));
-            }
-            lore.add("");
-        }
-
-        if (!data.getTradeoffs().isEmpty()) {
-            lore.add(color("&4&l[!] &c&lÄĂNH Äá»”I &4&l[!]"));
-            for (String t : data.getTradeoffs()) {
-                lore.add(color("  &8â–ª &c" + translateTradeoff(t)));
-            }
-            lore.add("");
-        }
-
-        data.getLore().forEach(l -> lore.add(color(l)));
-        lore.add("");
-
-        if (data.getCategory() == ElysiumItemData.ItemCategory.ACCESSORY) {
-            lore.add(color("&8&m                                  "));
-            lore.add(color("&a&l[!] &aGĂµ lá»‡nh &f/trangbi &aÄ‘á»ƒ sá»­ dá»¥ng"));
-            lore.add(color("&8&m                                  "));
-        } else if (data.getCategory() == ElysiumItemData.ItemCategory.ARMOR) {
-            lore.add(color("&8&m                                  "));
-            lore.add(color("&a&l[!] &aMáº·c vĂ o ngÆ°á»i Ä‘á»ƒ kĂ­ch hoáº¡t"));
-            lore.add(color("&8&m                                  "));
-        }
         
-        lore.add(color("&8ID: " + itemId));
-        meta.setLore(lore);
+        meta.setUnbreakable(true);
+        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
 
-        meta.getPersistentDataContainer().set(
-                new org.bukkit.NamespacedKey(plugin, ITEM_ID_KEY),
-                org.bukkit.persistence.PersistentDataType.STRING,
-                itemId
-        );
+        org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(plugin, ITEM_ID_KEY);
+        meta.getPersistentDataContainer().set(key, org.bukkit.persistence.PersistentDataType.STRING, data.getId().toUpperCase());
 
         item.setItemMeta(meta);
         return item;
@@ -222,93 +197,29 @@ public class ItemManager {
 
     private String buildTypeBadge(ElysiumItemData data) {
         String icon = switch (data.getSubType()) {
-            case "RING"       -> "đŸ’ &7Nháº«n";
-            case "NECKLACE"   -> "đŸ“¿ &7DĂ¢y Chuyá»n";
-            case "CHARM"      -> "đŸ€ &7BĂ¹a";
-            case "HELMET"     -> "â›‘ &7MÅ© GiĂ¡p";
-            case "CHESTPLATE" -> "đŸ›¡ &7GiĂ¡p Ngá»±c";
-            case "LEGGINGS"   -> "đŸ©² &7Quáº§n GiĂ¡p";
-            case "BOOTS"      -> "đŸ‘Ÿ &7GiĂ y GiĂ¡p";
-            case "TROPHY"     -> "đŸ† &7CĂºp Äáº·c Biá»‡t";
-            default           -> "&7" + data.getSubType();
+            case "RING"       -> "💍 &7Nhẫn";
+            case "NECKLACE"   -> "📿 &7Dây Chuyền";
+            case "HELMET"     -> "🛡 Giáp Đầu";
+            case "CHESTPLATE" -> "🛡 Giáp Ngực";
+            case "LEGGINGS"   -> "🛡 Giáp Chân";
+            case "BOOTS"      -> "🛡 Giày";
+            case "TROPHY"     -> "🏆 Cúp Kỷ Niệm";
+            default           -> "🔹 Kỹ Năng";
         };
-        return "&8[" + icon + "&8]";
+        return icon;
     }
 
-    private String formatStat(String key, Object val) {
-        String icon  = getStatIcon(key);
-        String name  = getStatDisplayName(key);
-        String value = formatStatValue(key, val);
-        return icon + " &7" + name + ": &f" + value;
-    }
-
-    private String getStatIcon(String key) {
-        return switch (key) {
-            case "bonus-hp"           -> "&câ¤";
-            case "bonus-defense"      -> "&7đŸ›¡";
-            case "bonus-mana"         -> "&bâœ¦";
-            case "bonus-mana-regen"   -> "&bâŸ³";
-            case "bonus-speed"        -> "&eâ¡";
-            case "bonus-jump"         -> "&aâ†‘";
-            case "bonus-drop-rate"    -> "&6â—ˆ";
-            case "bonus-exp"          -> "&aâ˜…";
-            case "bonus-crit-chance"  -> "&câ”";
-            case "bonus-crit-damage"  -> "&cđŸ’¥";
-            case "damage-reduce"      -> "&ađŸ›¡";
-            case "knockback-resist"   -> "&7â†©";
-            case "dodge-chance"       -> "&5â—";
-            case "mining-speed"       -> "&6â›";
-            case "fall-damage-reduce" -> "&aV";
-            case "fire-resist"        -> "&cđŸ”¥";
-            default                   -> "&7â–ª";
-        };
-    }
-
-    private String getStatDisplayName(String key) {
-        return switch (key) {
-            case "bonus-hp"           -> "HP";
-            case "bonus-defense"      -> "PhĂ²ng Thá»§";
-            case "bonus-mana"         -> "Mana";
-            case "bonus-mana-regen"   -> "Mana Regen";
-            case "bonus-speed"        -> "Tá»‘c Äá»™";
-            case "bonus-jump"         -> "Nháº£y";
-            case "bonus-drop-rate"    -> "Drop Rate";
-            case "bonus-exp"          -> "EXP Bonus";
-            case "bonus-crit-chance"  -> "Crit Chance";
-            case "bonus-crit-damage"  -> "Crit Damage";
-            case "damage-reduce"      -> "Giáº£m SĂ¡t ThÆ°Æ¡ng";
-            case "knockback-resist"   -> "KhĂ¡ng Knockback";
-            case "dodge-chance"       -> "Tá»‰ Lá»‡ NĂ©";
-            case "mining-speed"       -> "Tá»‘c Äá»™ ÄĂ o";
-            case "fall-damage-reduce" -> "Giáº£m Dame RÆ¡i";
-            case "fire-resist"        -> "KhĂ¡ng Lá»­a";
-            default                   -> key;
-        };
-    }
-
-    private String formatStatValue(String key, Object val) {
-        if (key.contains("rate") || key.contains("chance") || key.contains("reduce") || key.contains("resist")) {
-            return "&a+" + val + "%";
+    private String formatTradeoff(String tradeoff) {
+        if (tradeoff.startsWith("HEAL_REDUCTION:")) {
+            return "Giảm " + tradeoff.split(":")[1] + "% Khả năng hồi máu";
         }
-        if (val instanceof Number n) {
-            double dv = n.doubleValue();
-            if (dv > 0) return "&a+" + (dv % 1 == 0 ? (int)dv : String.format("%.2f", dv));
-            return dv % 1 == 0 ? "&f" + (int) dv : String.format("&f%.2f", dv);
+        if (tradeoff.startsWith("INCOMING_DAMAGE_INCREASE:")) {
+            return "Nhận thêm " + tradeoff.split(":")[1] + "% Sát thương";
         }
-        return "&f" + val;
+        return tradeoff;
     }
 
-    private String color(String s) { return s.replace("&", "\u00a7"); }
-
-    private String translateTradeoff(String t) {
-        if (t.startsWith("HEAL_REDUCTION")) {
-            String[] parts = t.split(":");
-            return "Giáº£m " + (parts.length > 1 ? parts[1] : "0") + "% Kháº£ nÄƒng há»“i mĂ¡u";
-        }
-        if (t.startsWith("INCOMING_DAMAGE_INCREASE")) {
-            String[] parts = t.split(":");
-            return "Nháº­n thĂªm " + (parts.length > 1 ? parts[1] : "0") + "% SĂ¡t thÆ°Æ¡ng tá»« káº» Ä‘á»‹ch";
-        }
-        return t;
+    private String color(String s) {
+        return org.bukkit.ChatColor.translateAlternateColorCodes('&', s);
     }
 }
