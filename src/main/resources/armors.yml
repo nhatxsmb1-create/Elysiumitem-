@@ -13,7 +13,6 @@ armors:
       - "&7đòn đánh của bạn tăng &c3% Sát Thương&7."
     mechanics:
       - "DAMAGE_PER_BLOOD_MARK:3"
-      - "BLOOD_MARK_ON_DASH"
     tradeoffs:
       - "HEAL_REDUCTION:30"
   
