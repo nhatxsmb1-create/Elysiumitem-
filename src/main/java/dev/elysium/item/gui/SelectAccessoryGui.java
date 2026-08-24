@@ -67,21 +67,27 @@ public class SelectAccessoryGui extends ElysiumGui {
                 setButton(slot, new GuiButton(display, e -> {
                     e.setCancelled(true);
                     
-                    // Deduct item from inventory
-                    item.setAmount(item.getAmount() - 1);
-                    
                     AccessorySlotData slotData = plugin.getAccessoryManager().getSlotData(player.getUniqueId());
                     
-                    // Give back old item
+                    String newId = plugin.getItemManager().getItemId(item);
+                    if (newId == null) newId = plugin.getItemManager().getItemId(display);
+                    
+                    // Kiem tra trang bi duy nhat
                     String current = slotData.getEquipped(targetSlot);
+                    slotData.unequip(targetSlot);
+                    
+                    if (slotData.isItemEquipped(newId)) {
+                        player.sendMessage("§cBạn đã đeo món đồ này ở ô khác rồi! (Trang bị duy nhất)");
+                        slotData.equip(targetSlot, current); // tra lai nhu cu
+                        player.closeInventory();
+                        return;
+                    }
+                    
+                    // Neu an toan thi trang bi
+                    item.setAmount(item.getAmount() - 1);
                     if (current != null) {
                         player.getInventory().addItem(plugin.getItemManager().createItem(current));
                     }
-                    
-                    // Equip new
-                    String newId = plugin.getItemManager().getItemId(item); // Should still work even if amount is 0
-                    if (newId == null) newId = plugin.getItemManager().getItemId(display);
-                    
                     slotData.equip(targetSlot, newId);
                     
                     player.sendMessage("§aĐã trang bị thành công!");
