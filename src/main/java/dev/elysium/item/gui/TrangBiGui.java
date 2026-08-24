@@ -88,9 +88,14 @@ public class TrangBiGui extends ElysiumGui {
         
         if (currentEquipped != null) {
             // Unequip
-            player.getInventory().addItem(plugin.getItemManager().createItem(currentEquipped));
+            ItemStack item = plugin.getItemManager().createItem(currentEquipped);
+            if (item != null) {
+                player.getInventory().addItem(item);
+                player.sendMessage("§aĐã tháo trang bị vào túi đồ!");
+            } else {
+                player.sendMessage("§cTrang bị này không còn tồn tại trong hệ thống, dữ liệu cũ đã bị xóa!");
+            }
             slotData.unequip(slotType);
-            player.sendMessage("§aĐã tháo trang bị vào túi đồ!");
             
             buttons.clear();
             inventory.clear();

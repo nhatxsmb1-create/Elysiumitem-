@@ -32,6 +32,7 @@ public class ElysiumItem extends JavaPlugin implements Listener {
 
         // Init - Thu tu quan trong: itemManager phai duoc khoi tao truoc accessoryManager
         itemManager  = new ItemManager(this);
+        itemManager.loadAll(); // LOAD DATA HERE
         accessoryManager  = new AccessoryManager(this);
         mechanicEngine = new MechanicEngine(this);
         markManager = new MarkManager(this);
