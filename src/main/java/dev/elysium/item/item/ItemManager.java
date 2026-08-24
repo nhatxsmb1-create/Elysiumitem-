@@ -53,7 +53,12 @@ public class ItemManager {
         if (!f.exists()) return;
         YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
 
-        ConfigurationSection itemsSec = config.getConfigurationSection(category.name().toLowerCase() + "s");
+                String rootKey = switch (category) {
+            case ACCESSORY -> "accessories";
+            case ARMOR     -> "armors";
+            case TROPHY    -> "trophies";
+        };
+        ConfigurationSection itemsSec = config.getConfigurationSection(rootKey);
         if (itemsSec == null) return;
 
         for (String id : itemsSec.getKeys(false)) {
