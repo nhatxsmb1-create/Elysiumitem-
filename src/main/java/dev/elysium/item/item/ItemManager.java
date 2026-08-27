@@ -135,12 +135,13 @@ public class ItemManager {
             GemData gem = plugin.getGemManager().getGem(gemId);
             if (gem != null) {
                 lore.add("");
-                lore.add(color("&8=====[ &6LỖ KHẢM &8]====="));
-                lore.add(color("&7Đang khảm: " + gem.getDisplayName()));
+                lore.add(color("&8&m---------------------------"));
+                lore.add(color("&6&l✦ &e&lÔ KHẢM THỨC TỈNH &6&l✦"));
+                lore.add(color("&8» &fĐang Khảm: " + gem.getDisplayName()));
                 for (String gl : gem.getLore()) {
-                    lore.add(color(gl));
+                    lore.add(color("&8» " + gl));
                 }
-                lore.add(color("&8====================="));
+                lore.add(color("&8&m---------------------------"));
             }
         }
 
