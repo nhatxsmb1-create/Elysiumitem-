@@ -15,6 +15,7 @@ public class ItemManager {
 
     private final ElysiumItem plugin;
     public static final String ITEM_ID_KEY = "elysium_item_id";
+    public static final String SOCKET_1_KEY = "elysium_socket_1";
 
     private final Map<String, ElysiumItemData> itemDataMap = new HashMap<>();
 
