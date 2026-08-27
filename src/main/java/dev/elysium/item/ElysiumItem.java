@@ -43,6 +43,7 @@ public class ElysiumItem extends JavaPlugin implements Listener {
 
         // Commands
         getCommand("eitem").setExecutor(new ItemCommand(this));
+        getCommand("loren").setExecutor(new dev.elysium.item.command.LorenCommand(this));
         getCommand("trangbi").setExecutor(new dev.elysium.item.command.TrangBiCommand(this));
         getCommand("eitemadmin").setExecutor(new AdminCommand(this));
 

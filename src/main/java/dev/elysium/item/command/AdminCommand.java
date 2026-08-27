@@ -36,19 +36,18 @@ public class AdminCommand implements CommandExecutor {
         }
 
         if (args[0].equalsIgnoreCase("give") && args.length == 3) {
-            Player target = Bukkit.getPlayer(args[1]);
-            if (target == null) {
-                sender.sendMessage("§cNgười chơi không online!");
-                return true;
-            }
-            String itemId = args[2].toUpperCase();
-            ItemStack item = plugin.getItemManager().createItem(itemId);
-            if (item == null) {
-                sender.sendMessage("§cItem không tồn tại!");
-                return true;
-            }
-            target.getInventory().addItem(item);
-            sender.sendMessage("§aĐã đưa " + itemId + " cho " + target.getName());
+            org.bukkit.entity.Player target = org.bukkit.Bukkit.getPlayer(args[1]);
+            if (target == null) { sender.sendMessage("§cOffline!"); return true; }
+            org.bukkit.inventory.ItemStack item = plugin.getItemManager().createItem(args[2].toUpperCase());
+            if (item != null) target.getInventory().addItem(item);
+            return true;
+        }
+        
+        if (args[0].equalsIgnoreCase("gem") && args.length == 3) {
+            org.bukkit.entity.Player target = org.bukkit.Bukkit.getPlayer(args[1]);
+            if (target == null) { sender.sendMessage("§cOffline!"); return true; }
+            org.bukkit.inventory.ItemStack item = plugin.getGemManager().createGemItem(args[2].toUpperCase());
+            if (item != null) target.getInventory().addItem(item);
             return true;
         }
 

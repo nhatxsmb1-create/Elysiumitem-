@@ -2,6 +2,7 @@ package dev.elysium.item.gui;
 
 import dev.elysium.item.ElysiumItem;
 import dev.elysium.item.item.ElysiumItemData;
+import dev.elysium.item.item.GemData;
 import dev.elysium.core.gui.ElysiumGui;
 import dev.elysium.core.gui.GuiButton;
 import dev.elysium.core.gui.ItemBuilder;
@@ -24,7 +25,7 @@ public class AdminGui extends ElysiumGui {
         37,38,39,40,41,42,43
     };
 
-    private ElysiumItemData.ItemCategory filterCategory = null;
+    private String filter = "ALL"; // ALL, ACCESSORY, ARMOR, GEM
 
     public AdminGui(ElysiumItem plugin, Player target) {
         super("&5&l[Admin] Kho Trang Bị", 54);
@@ -36,10 +37,19 @@ public class AdminGui extends ElysiumGui {
     public void build(Player viewer) {
         fill(ItemBuilder.filler());
 
-        List<Map.Entry<String, ElysiumItemData>> items = new ArrayList<>();
-        for (Map.Entry<String, ElysiumItemData> entry : plugin.getItemManager().getAllItems().entrySet()) {
-            if (filterCategory == null || entry.getValue().getCategory() == filterCategory) {
-                items.add(entry);
+        List<Object[]> items = new ArrayList<>(); // [id, type, object]
+
+        if (!filter.equals("GEM")) {
+            for (Map.Entry<String, ElysiumItemData> entry : plugin.getItemManager().getAllItems().entrySet()) {
+                if (filter.equals("ALL") || entry.getValue().getCategory().name().equals(filter)) {
+                    items.add(new Object[]{entry.getKey(), "ITEM", entry.getValue()});
+                }
+            }
+        }
+        
+        if (filter.equals("ALL") || filter.equals("GEM")) {
+            for (Map.Entry<String, GemData> entry : plugin.getGemManager().getAllGems().entrySet()) {
+                items.add(new Object[]{entry.getKey(), "GEM", entry.getValue()});
             }
         }
 
@@ -48,59 +58,87 @@ public class AdminGui extends ElysiumGui {
             int idx = start + i;
             if (idx >= items.size()) break;
 
-            Map.Entry<String, ElysiumItemData> entry = items.get(idx);
-            String          id   = entry.getKey();
-            ElysiumItemData data = entry.getValue();
+            Object[] entry = items.get(idx);
+            String id = (String) entry[0];
+            String type = (String) entry[1];
 
-            Material mat;
-            try { mat = Material.valueOf(data.getMaterial()); }
-            catch (Exception e) { mat = Material.STONE; }
+            if (type.equals("ITEM")) {
+                ElysiumItemData data = (ElysiumItemData) entry[2];
+                Material mat;
+                try { mat = Material.valueOf(data.getMaterial()); }
+                catch (Exception e) { mat = Material.STONE; }
 
-            List<String> lore = new ArrayList<>();
-            lore.add(color("&8" + data.getCategory() + " | " + data.getSubType()));
-            lore.add("");
-            data.getLore().forEach(l -> lore.add(color(l)));
-            lore.add("");
-            lore.add(color("&7ID: &f" + id));
-            lore.add("");
-            lore.add(color("&a[Click] &fđể lấy 1 cái vào túi."));
+                List<String> lore = new ArrayList<>();
+                lore.add(color("&8" + data.getCategory() + " | " + data.getSubType()));
+                lore.add("");
+                data.getLore().forEach(l -> lore.add(color(l)));
+                lore.add("");
+                lore.add(color("&7ID: &f" + id));
+                lore.add("");
+                lore.add(color("&a[Click] &fđể lấy 1 cái vào túi."));
 
-            setButton(ITEM_SLOTS[i], new GuiButton(
-                    new ItemBuilder(mat)
-                            .name(color(data.getDisplayName()))
-                            .lore(lore)
-                            .customModelData(data.getModelData())
-                            .build(),
-                    e -> {
-                        e.setCancelled(true);
-                        org.bukkit.inventory.ItemStack item = plugin.getItemManager().createItem(id);
-                        target.getInventory().addItem(item);
-                        viewer.sendMessage(color("&aĐã lấy &f" + data.getDisplayName()));
-                    }
-            ));
+                setButton(ITEM_SLOTS[i], new GuiButton(
+                        new ItemBuilder(mat)
+                                .name(color(data.getDisplayName()))
+                                .lore(lore)
+                                .customModelData(data.getModelData())
+                                .build(),
+                        e -> {
+                            e.setCancelled(true);
+                            org.bukkit.inventory.ItemStack item = plugin.getItemManager().createItem(id);
+                            target.getInventory().addItem(item);
+                            viewer.sendMessage(color("&aĐã lấy &f" + data.getDisplayName()));
+                        }
+                ));
+            } else if (type.equals("GEM")) {
+                GemData data = (GemData) entry[2];
+                List<String> lore = new ArrayList<>();
+                lore.add(color("&8NGỌC ĐỘT BIẾN"));
+                lore.add("");
+                data.getLore().forEach(l -> lore.add(color(l)));
+                lore.add("");
+                lore.add(color("&7ID: &f" + id));
+                lore.add("");
+                lore.add(color("&a[Click] &fđể lấy 1 cái vào túi."));
+
+                setButton(ITEM_SLOTS[i], new GuiButton(
+                        new ItemBuilder(Material.EMERALD)
+                                .name(color(data.getDisplayName()))
+                                .lore(lore)
+                                .build(),
+                        e -> {
+                            e.setCancelled(true);
+                            org.bukkit.inventory.ItemStack item = plugin.getGemManager().createGemItem(id);
+                            target.getInventory().addItem(item);
+                            viewer.sendMessage(color("&aĐã lấy &f" + data.getDisplayName()));
+                        }
+                ));
+            }
         }
 
         // Filters
         setButton(0, new GuiButton(
-                new ItemBuilder(filterCategory == null ? Material.NETHER_STAR : Material.GRAY_DYE)
-                        .name(color(filterCategory == null ? "&e&lTẤT CẢ" : "&7Tất Cả")).build(),
-                e -> { e.setCancelled(true); filterCategory = null; page = 0; buttons.clear(); inventory.clear(); build(viewer); }
+                new ItemBuilder(filter.equals("ALL") ? Material.NETHER_STAR : Material.GRAY_DYE)
+                        .name(color(filter.equals("ALL") ? "&e&lTẤT CẢ" : "&7Tất Cả")).build(),
+                e -> { e.setCancelled(true); filter = "ALL"; page = 0; buttons.clear(); inventory.clear(); build(viewer); }
         ));
 
         setButton(1, new GuiButton(
-                new ItemBuilder(filterCategory == ElysiumItemData.ItemCategory.ACCESSORY
-                        ? Material.EMERALD : Material.GRAY_DYE)
-                        .name(color(filterCategory == ElysiumItemData.ItemCategory.ACCESSORY
-                                ? "&a&lPHỤ KIỆN" : "&7Phụ Kiện")).build(),
-                e -> { e.setCancelled(true); filterCategory = ElysiumItemData.ItemCategory.ACCESSORY; page = 0; buttons.clear(); inventory.clear(); build(viewer); }
+                new ItemBuilder(filter.equals("ACCESSORY") ? Material.GOLD_NUGGET : Material.GRAY_DYE)
+                        .name(color(filter.equals("ACCESSORY") ? "&a&lPHỤ KIỆN" : "&7Phụ Kiện")).build(),
+                e -> { e.setCancelled(true); filter = "ACCESSORY"; page = 0; buttons.clear(); inventory.clear(); build(viewer); }
         ));
 
         setButton(2, new GuiButton(
-                new ItemBuilder(filterCategory == ElysiumItemData.ItemCategory.ARMOR
-                        ? Material.DIAMOND_CHESTPLATE : Material.GRAY_DYE)
-                        .name(color(filterCategory == ElysiumItemData.ItemCategory.ARMOR
-                                ? "&b&lGIÁP" : "&7Giáp")).build(),
-                e -> { e.setCancelled(true); filterCategory = ElysiumItemData.ItemCategory.ARMOR; page = 0; buttons.clear(); inventory.clear(); build(viewer); }
+                new ItemBuilder(filter.equals("ARMOR") ? Material.DIAMOND_CHESTPLATE : Material.GRAY_DYE)
+                        .name(color(filter.equals("ARMOR") ? "&b&lGIÁP" : "&7Giáp")).build(),
+                e -> { e.setCancelled(true); filter = "ARMOR"; page = 0; buttons.clear(); inventory.clear(); build(viewer); }
+        ));
+        
+        setButton(3, new GuiButton(
+                new ItemBuilder(filter.equals("GEM") ? Material.EMERALD : Material.GRAY_DYE)
+                        .name(color(filter.equals("GEM") ? "&d&lNGỌC" : "&7Ngọc")).build(),
+                e -> { e.setCancelled(true); filter = "GEM"; page = 0; buttons.clear(); inventory.clear(); build(viewer); }
         ));
 
         // Stats

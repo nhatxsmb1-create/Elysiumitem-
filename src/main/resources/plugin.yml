@@ -26,6 +26,11 @@ commands:
     usage: /trangbi
     permission: elysium.item.use
 
+  loren:
+    description: Mo GUI Lo Ren (Kham Ngoc, Nang Cap)
+    usage: /loren
+    permission: elysium.item.use
+
 permissions:
   elysium.item.use:
     default: true
