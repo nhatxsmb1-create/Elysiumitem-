@@ -68,16 +68,17 @@ public class LorenGui extends ElysiumGui {
             String gemId = plugin.getGemManager().getGemId(selectedGem);
             if (gemId == null) return;
             
-            // Remove items
-            selectedGear.setAmount(selectedGear.getAmount() - 1);
-            selectedGem.setAmount(selectedGem.getAmount() - 1);
-
-            // Create new socketed item
+            // Create new socketed item (Clone first before amounts hit 0)
             ItemStack socketed = selectedGear.clone();
             socketed.setAmount(1);
             plugin.getItemManager().setSocket(socketed, 1, gemId);
             plugin.getItemManager().rebuildLore(socketed);
             
+            // Remove old items
+            selectedGear.setAmount(selectedGear.getAmount() - 1);
+            selectedGem.setAmount(selectedGem.getAmount() - 1);
+
+            // Give the new socketed item back to player
             player.getInventory().addItem(socketed);
             
             player.sendMessage("§a§l[!] §fKhảm thành công " + plugin.getGemManager().getGem(gemId).getDisplayName() + " §fvào trang bị!");

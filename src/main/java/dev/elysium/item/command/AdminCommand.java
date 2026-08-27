@@ -51,21 +51,17 @@ public class AdminCommand implements CommandExecutor {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("reload")) {
-            // Cập nhật đè file từ JAR (giống các plugin lớn)
-            try {
-                plugin.saveResource("items.yml", true);
-                plugin.saveResource("armors.yml", true);
-                plugin.saveResource("trophies.yml", true);
-                plugin.saveResource("config.yml", true);
-                sender.sendMessage("§e[Hệ Thống] Đã đồng bộ & cập nhật toàn bộ file YML từ lõi Source!");
-            } catch (Exception ex) {
-                sender.sendMessage("§c[Hệ Thống] Lỗi đồng bộ: " + ex.getMessage());
-            }
-
-            plugin.reloadConfig();
+                if (args[0].equalsIgnoreCase("reload")) {
             plugin.getItemManager().loadAll();
-            sender.sendMessage("§a[Hệ Thống] Tải lại toàn bộ dữ liệu Plugin thành công!");
+            plugin.getGemManager().loadGems();
+            
+            // Auto update all online players
+            for (org.bukkit.entity.Player p : org.bukkit.Bukkit.getOnlinePlayers()) {
+                plugin.getItemManager().updatePlayerInventory(p);
+            }
+            
+            sender.sendMessage("§a[!] Đã tải lại Config Vật Phẩm & Ngọc!");
+            sender.sendMessage("§a[!] Đã tự động làm mới giao diện trang bị cho toàn bộ người chơi Online!");
             return true;
         }
 

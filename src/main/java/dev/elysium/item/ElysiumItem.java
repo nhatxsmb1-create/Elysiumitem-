@@ -10,6 +10,7 @@ import dev.elysium.item.mechanic.MechanicEngine;
 import dev.elysium.item.mechanic.MarkManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -64,6 +65,15 @@ public class ElysiumItem extends JavaPlugin implements Listener {
         getLogger().info("ElysiumItem disabled.");
     }
     
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        // Auto-update visuals (Lore, Name) of all Elysium items in inventory
+        // This ensures admin config changes apply visually immediately upon login
+        // while safely preserving player's Sockets (NBT).
+        itemManager.updatePlayerInventory(e.getPlayer());
+    }
+
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         if (accessoryManager != null) {
