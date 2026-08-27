@@ -137,9 +137,10 @@ public class ItemManager {
                 lore.add("");
                 lore.add(color("&8&m---------------------------"));
                 lore.add(color("&6&l✦ &e&lÔ KHẢM THỨC TỈNH &6&l✦"));
-                lore.add(color("&8» &fĐang Khảm: " + gem.getDisplayName()));
+                lore.add(color("&fNgọc: " + gem.getDisplayName()));
+                lore.add("");
                 for (String gl : gem.getLore()) {
-                    lore.add(color("&8» " + gl));
+                    lore.add(color(gl));
                 }
                 lore.add(color("&8&m---------------------------"));
             }
