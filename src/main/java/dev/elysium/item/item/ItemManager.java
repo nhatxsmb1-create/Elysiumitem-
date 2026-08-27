@@ -42,6 +42,13 @@ public class ItemManager {
                 ItemStack updated = createItemForPlayer(id, player);
                 if (updated != null) {
                     updated.setAmount(item.getAmount());
+                    // Copy socket
+                    String gemId = getSocket(item, 1);
+                    if (gemId != null) {
+                        setSocket(updated, 1, gemId);
+                    }
+                    // Rebuild lore based on socket
+                    rebuildLore(updated);
                     inv.setItem(i, updated);
                 }
             }
@@ -96,6 +103,53 @@ public class ItemManager {
     
     public Set<String> getItemIds() { return itemDataMap.keySet(); }
     public Map<String, ElysiumItemData> getAllItems() { return itemDataMap; }
+
+    
+    public void rebuildLore(ItemStack item) {
+        if (item == null || !item.hasItemMeta()) return;
+        String itemId = getItemId(item);
+        if (itemId == null) return;
+        ElysiumItemData data = getItemData(itemId);
+        if (data == null) return;
+
+        var meta = item.getItemMeta();
+        List<String> lore = new ArrayList<>();
+        lore.add(color("&8« &7[&8" + buildTypeBadge(data) + "&7] &8»"));
+        lore.add("");
+
+        if (!data.getTradeoffs().isEmpty()) {
+            lore.add(color("&c[!] ĐÁNH ĐỔI [!]"));
+            for (String t : data.getTradeoffs()) {
+                lore.add(color(" &8- &c" + formatTradeoff(t)));
+            }
+            lore.add("");
+        }
+
+        for (String l : data.getLore()) {
+            lore.add(color(l));
+        }
+        
+        String gemId = getSocket(item, 1);
+        if (gemId != null) {
+            GemData gem = plugin.getGemManager().getGem(gemId);
+            if (gem != null) {
+                lore.add("");
+                lore.add(color("&8=====[ &6LỖ KHẢM &8]====="));
+                lore.add(color("&7Đang khảm: " + gem.getDisplayName()));
+                for (String gl : gem.getLore()) {
+                    lore.add(color(gl));
+                }
+                lore.add(color("&8====================="));
+            }
+        }
+
+        lore.add("");
+        lore.add(color("&a[!] Dùng lệnh &f/trangbi &ađể mặc vào người"));
+        lore.add(color("&8ID: " + data.getId().toUpperCase()));
+        
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+    }
 
     public ItemStack createItem(String itemId) {
         ElysiumItemData data = getItemData(itemId);
@@ -174,31 +228,52 @@ public class ItemManager {
         return null;
     }
 
-    public List<String> getEquippedItemIds(Player player) {
-        List<String> list = new ArrayList<>();
-        if (player.getInventory().getHelmet() != null) {
-            String id = getItemId(player.getInventory().getHelmet());
-            if (id != null) list.add(id);
+    
+    public String getSocket(ItemStack item, int slot) {
+        if (item == null || !item.hasItemMeta()) return null;
+        var pdc = item.getItemMeta().getPersistentDataContainer();
+        org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(plugin, slot == 1 ? SOCKET_1_KEY : SOCKET_1_KEY);
+        if (pdc.has(key, org.bukkit.persistence.PersistentDataType.STRING)) {
+            return pdc.get(key, org.bukkit.persistence.PersistentDataType.STRING);
         }
-        if (player.getInventory().getChestplate() != null) {
-            String id = getItemId(player.getInventory().getChestplate());
-            if (id != null) list.add(id);
-        }
-        if (player.getInventory().getLeggings() != null) {
-            String id = getItemId(player.getInventory().getLeggings());
-            if (id != null) list.add(id);
-        }
-        if (player.getInventory().getBoots() != null) {
-            String id = getItemId(player.getInventory().getBoots());
-            if (id != null) list.add(id);
-        }
+        return null;
+    }
 
+    public void setSocket(ItemStack item, int slot, String gemId) {
+        if (item == null || !item.hasItemMeta()) return;
+        var meta = item.getItemMeta();
+        var pdc = meta.getPersistentDataContainer();
+        org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(plugin, slot == 1 ? SOCKET_1_KEY : SOCKET_1_KEY);
+        if (gemId == null) {
+            pdc.remove(key);
+        } else {
+            pdc.set(key, org.bukkit.persistence.PersistentDataType.STRING, gemId.toUpperCase());
+        }
+        item.setItemMeta(meta);
+    }
+
+    public List<org.bukkit.inventory.ItemStack> getEquippedItems(Player player) {
+        List<org.bukkit.inventory.ItemStack> list = new ArrayList<>();
+        if (player.getInventory().getHelmet() != null) list.add(player.getInventory().getHelmet());
+        if (player.getInventory().getChestplate() != null) list.add(player.getInventory().getChestplate());
+        if (player.getInventory().getLeggings() != null) list.add(player.getInventory().getLeggings());
+        if (player.getInventory().getBoots() != null) list.add(player.getInventory().getBoots());
+        
         var slotData = plugin.getAccessoryManager().getSlotData(player.getUniqueId());
-        if (slotData.getNecklaceId() != null) list.add(slotData.getNecklaceId());
-        if (slotData.getRing1Id() != null) list.add(slotData.getRing1Id());
-        if (slotData.getRing2Id() != null) list.add(slotData.getRing2Id());
+        if (slotData.getNecklace() != null) list.add(slotData.getNecklace());
+        if (slotData.getRing1() != null) list.add(slotData.getRing1());
+        if (slotData.getRing2() != null) list.add(slotData.getRing2());
         
         return list;
+    }
+
+    public List<String> getEquippedItemIds(Player player) {
+        List<String> ids = new ArrayList<>();
+        for (org.bukkit.inventory.ItemStack item : getEquippedItems(player)) {
+            String id = getItemId(item);
+            if (id != null) ids.add(id);
+        }
+        return ids;
     }
 
     private String buildTypeBadge(ElysiumItemData data) {

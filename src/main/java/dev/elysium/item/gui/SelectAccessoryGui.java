@@ -72,11 +72,22 @@ public class SelectAccessoryGui extends ElysiumGui {
                     String newId = plugin.getItemManager().getItemId(item);
                     if (newId == null) newId = plugin.getItemManager().getItemId(display);
                     
-                    // Kiem tra trang bi duy nhat
-                    String current = slotData.getEquipped(targetSlot);
+                    // Kiem tra trang bi duy nhat (dua tren Base ID)
+                    ItemStack current = slotData.getEquippedItem(targetSlot);
                     slotData.unequip(targetSlot);
                     
-                    if (slotData.isItemEquipped(newId)) {
+                    // isItemEquipped checking ID in AccessorySlotData is broken now because it stores ItemStack.
+                    // We need a helper here.
+                    boolean alreadyEquipped = false;
+                    for (AccessorySlotData.SlotType sType : AccessorySlotData.SlotType.values()) {
+                        ItemStack eq = slotData.getEquippedItem(sType);
+                        if (eq != null && newId.equals(plugin.getItemManager().getItemId(eq))) {
+                            alreadyEquipped = true;
+                            break;
+                        }
+                    }
+                    
+                    if (alreadyEquipped) {
                         player.sendMessage("§cBạn đã đeo món đồ này ở ô khác rồi! (Trang bị duy nhất)");
                         slotData.equip(targetSlot, current); // tra lai nhu cu
                         player.closeInventory();
@@ -84,11 +95,14 @@ public class SelectAccessoryGui extends ElysiumGui {
                     }
                     
                     // Neu an toan thi trang bi
+                    ItemStack toEquip = item.clone();
+                    toEquip.setAmount(1);
                     item.setAmount(item.getAmount() - 1);
+                    
                     if (current != null) {
-                        player.getInventory().addItem(plugin.getItemManager().createItem(current));
+                        player.getInventory().addItem(current);
                     }
-                    slotData.equip(targetSlot, newId);
+                    slotData.equip(targetSlot, toEquip);
                     
                     player.sendMessage("§aĐã trang bị thành công!");
                     dev.elysium.core.ElysiumCore.getInstance().getGuiManager().open(player, new TrangBiGui(plugin));

@@ -3,6 +3,7 @@ package dev.elysium.item;
 import dev.elysium.item.command.AdminCommand;
 import dev.elysium.item.command.ItemCommand;
 import dev.elysium.item.item.ItemManager;
+import dev.elysium.item.item.GemManager;
 import dev.elysium.item.accessory.AccessoryManager;
 import dev.elysium.item.listener.ArmorListener;
 import dev.elysium.item.mechanic.MechanicEngine;
@@ -17,6 +18,7 @@ public class ElysiumItem extends JavaPlugin implements Listener {
     private static ElysiumItem instance;
 
     private ItemManager  itemManager;
+    private GemManager gemManager;
     private AccessoryManager  accessoryManager;
     private MechanicEngine mechanicEngine;
     private MarkManager markManager;
@@ -31,6 +33,8 @@ public class ElysiumItem extends JavaPlugin implements Listener {
         saveResource("config.yml",   false);
 
         // Init - Thu tu quan trong: itemManager phai duoc khoi tao truoc accessoryManager
+        gemManager = new GemManager(this);
+        gemManager.loadGems();
         itemManager  = new ItemManager(this);
         itemManager.loadAll(); // LOAD DATA HERE
         accessoryManager  = new AccessoryManager(this);
@@ -68,6 +72,7 @@ public class ElysiumItem extends JavaPlugin implements Listener {
 
     public static ElysiumItem getInstance() { return instance; }
     public ItemManager        getItemManager()  { return itemManager; }
+    public GemManager         getGemManager()   { return gemManager; }
     public AccessoryManager   getAccessoryManager() { return accessoryManager; }
     public MechanicEngine     getMechanicEngine() { return mechanicEngine; }
     public MarkManager        getMarkManager()    { return markManager; }

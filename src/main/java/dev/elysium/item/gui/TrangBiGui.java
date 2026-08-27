@@ -60,19 +60,19 @@ public class TrangBiGui extends ElysiumGui {
         fill(4, head);
 
         // Slot 20: Dây chuyền
-        setButton(20, new GuiButton(getSlotItem(slotData.getNecklaceId(), "Dây Chuyền", Material.CHAIN), e -> {
+        setButton(20, new GuiButton(getSlotItem(slotData.getNecklace(), "Dây Chuyền", Material.CHAIN), e -> {
             e.setCancelled(true);
             handleSlotClick(player, AccessorySlotData.SlotType.NECKLACE, "NECKLACE", slotData);
         }));
         
         // Slot 22: Nhẫn 1
-        setButton(22, new GuiButton(getSlotItem(slotData.getRing1Id(), "Nhẫn 1", Material.GOLD_NUGGET), e -> {
+        setButton(22, new GuiButton(getSlotItem(slotData.getRing1(), "Nhẫn 1", Material.GOLD_NUGGET), e -> {
             e.setCancelled(true);
             handleSlotClick(player, AccessorySlotData.SlotType.RING_1, "RING", slotData);
         }));
         
         // Slot 24: Nhẫn 2
-        setButton(24, new GuiButton(getSlotItem(slotData.getRing2Id(), "Nhẫn 2", Material.GOLD_NUGGET), e -> {
+        setButton(24, new GuiButton(getSlotItem(slotData.getRing2(), "Nhẫn 2", Material.GOLD_NUGGET), e -> {
             e.setCancelled(true);
             handleSlotClick(player, AccessorySlotData.SlotType.RING_2, "RING", slotData);
         }));
@@ -84,17 +84,12 @@ public class TrangBiGui extends ElysiumGui {
     }
 
     private void handleSlotClick(Player player, AccessorySlotData.SlotType slotType, String requiredSubType, AccessorySlotData slotData) {
-        String currentEquipped = slotData.getEquipped(slotType);
+        ItemStack currentEquipped = slotData.getEquippedItem(slotType);
         
         if (currentEquipped != null) {
             // Unequip
-            ItemStack item = plugin.getItemManager().createItem(currentEquipped);
-            if (item != null) {
-                player.getInventory().addItem(item);
-                player.sendMessage("§aĐã tháo trang bị vào túi đồ!");
-            } else {
-                player.sendMessage("§cTrang bị này không còn tồn tại trong hệ thống, dữ liệu cũ đã bị xóa!");
-            }
+            player.getInventory().addItem(currentEquipped.clone());
+            player.sendMessage("§aĐã tháo trang bị vào túi đồ!");
             slotData.unequip(slotType);
             
             buttons.clear();
@@ -106,8 +101,8 @@ public class TrangBiGui extends ElysiumGui {
         }
     }
 
-    private ItemStack getSlotItem(String itemId, String slotName, Material defaultMat) {
-        if (itemId == null || itemId.isEmpty()) {
+    private ItemStack getSlotItem(ItemStack equippedItem, String slotName, Material defaultMat) {
+        if (equippedItem == null) {
             return new ItemBuilder(defaultMat).name("§7[Trống] §f" + slotName)
                 .lore(
                     "",
@@ -119,19 +114,7 @@ public class TrangBiGui extends ElysiumGui {
                 .build();
         }
         
-        ItemStack item = plugin.getItemManager().createItem(itemId);
-        if (item == null) {
-            // Item ID da duoc luu nhung khong con ton tai trong config -> hien slot rong
-            return new ItemBuilder(defaultMat).name("§7[Trống] §f" + slotName)
-                .lore(
-                    "",
-                    "§cMón đồ §e" + itemId + " §ckhông còn tồn tại.",
-                    "§7Hãy tháo ra và trang bị lại.",
-                    "",
-                    "§e[Click] §fđể tháo."
-                )
-                .build();
-        }
+        ItemStack item = equippedItem.clone();
         org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.getLore();
         if (lore == null) lore = new ArrayList<>();

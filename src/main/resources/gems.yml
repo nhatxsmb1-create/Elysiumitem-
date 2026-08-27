@@ -1,0 +1,23 @@
+gems:
+  GEM_BLOOD_DOMAIN:
+    display-name: "&4&lNgọc Huyết Uyên"
+    lore:
+      - "&7Viên ngọc ngưng tụ từ vạn giọt máu."
+      - ""
+      - "&c✨ Đột Biến: Lãnh Địa Máu"
+      - "&7KHI TUNG CHIÊU CUỐI (Ultimate):"
+      - "&7Rút cạn Huyết Ấn xung quanh để tạo ra"
+      - "&7một Lãnh Địa Máu cực lớn."
+    mechanics:
+      - "BLOOD_DOMAIN_ON_ULTIMATE"
+      
+  GEM_FROST_NOVA:
+    display-name: "&b&lNgọc Sương Giá"
+    lore:
+      - "&7Lạnh buốt thấu xương."
+      - ""
+      - "&b✨ Đột Biến: Cực Hàn"
+      - "&7Khi tung Chiêu Cuối (Ultimate):"
+      - "&7Đóng băng ngay lập tức kẻ địch."
+    mechanics:
+      - "FROST_NOVA_ON_ULTIMATE"
