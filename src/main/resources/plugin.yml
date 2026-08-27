@@ -4,7 +4,7 @@ main: dev.elysium.item.ElysiumItem
 api-version: '1.21'
 authors:
   - Elysium
-description: Special Items - Accessory, Armor, Trophy with Mastery System
+description: Special Items - Build Fragments System
 
 depend:
   - ElysiumCore
@@ -13,7 +13,7 @@ commands:
   eitem:
     description: ElysiumItem player command
     aliases: [ei]
-    usage: /eitem <info|mastery|list>
+    usage: /eitem <info|list>
     permission: elysium.item.use
   eitemadmin:
     description: ElysiumItem admin command
