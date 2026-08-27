@@ -18,7 +18,11 @@ public class AccessoryManager {
 
     public AccessoryManager(ElysiumItem plugin) {
         this.plugin = plugin;
-        this.dataFile = new File(plugin.getDataFolder(), "accessories_data.yml");
+        File coreFolder = new File(plugin.getDataFolder().getParentFile(), "ElysiumCore/data");
+        if (!coreFolder.exists()) {
+            coreFolder.mkdirs();
+        }
+        this.dataFile = new File(coreFolder, "accessories_data.yml");
         loadData();
     }
 
