@@ -5,9 +5,11 @@ gems:
       - "&7Viên ngọc ngưng tụ từ vạn giọt máu."
       - ""
       - "&c✨ Đột Biến: Lãnh Địa Máu"
-      - "&7KHI TUNG CHIÊU CUỐI (Ultimate):"
-      - "&7Rút cạn Huyết Ấn xung quanh để tạo ra"
-      - "&7một Lãnh Địa Máu cực lớn."
+      - "&7KHI TUNG CHIÊU CUỐI (Tất cả vũ khí):"
+      - "&7Kích hoạt Lãnh Địa Máu, rút cạn toàn"
+      - "&7bộ Huyết Ấn trên kẻ địch xung quanh"
+      - "&7(10m). Gây Sát thương Chuẩn và Hồi HP"
+      - "&7cho bản thân tương ứng với số Huyết Ấn!"
     mechanics:
       - "BLOOD_DOMAIN_ON_ULTIMATE"
       

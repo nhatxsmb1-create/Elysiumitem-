@@ -3,6 +3,7 @@ package dev.elysium.item.mechanic;
 import dev.elysium.item.ElysiumItem;
 import dev.elysium.core.event.ElysiumUltimateEvent;
 import dev.elysium.item.item.GemData;
+import dev.elysium.core.event.ElysiumDashEvent;
 import dev.elysium.item.item.ElysiumItemData;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -85,7 +86,9 @@ public class MechanicEngine implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
     
-    public void onPlayerDash(Player player) {
+    @EventHandler
+    public void onPlayerDash(ElysiumDashEvent event) {
+        Player player = event.getPlayer();
         List<String> equipped = plugin.getItemManager().getEquippedItemIds(player);
         for (String id : equipped) {
             ElysiumItemData data = plugin.getItemManager().getItemData(id);
