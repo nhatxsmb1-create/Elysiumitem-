@@ -51,7 +51,9 @@ public class MechanicEngine implements Listener {
                 if (marks > 0) {
                     totalMarksConsumed += marks;
                     plugin.getMarkManager().consumeMarks(target, "BLOOD_MARK");
-                    target.damage(100.0 * marks, player); // Heavy damage
+                    double dmg = 100.0 * marks;
+                    try { dmg *= dev.elysium.core.api.CoreAPI.getMetaMultiplier("BLOOD"); } catch(Exception ex) {}
+                    target.damage(dmg, player); // Heavy damage
                 }
             }
         }
@@ -71,7 +73,9 @@ public class MechanicEngine implements Listener {
         for (org.bukkit.entity.Entity entity : player.getNearbyEntities(8, 5, 8)) {
             if (entity instanceof LivingEntity target && target != player) {
                 target.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.SLOWNESS, 100, 9, false, false));
-                target.damage(50.0, player); // Flat frost damage
+                double dmg = 50.0;
+                try { dmg *= dev.elysium.core.api.CoreAPI.getMetaMultiplier("FROST"); } catch(Exception ex) {}
+                target.damage(dmg, player); // Flat frost damage
             }
         }
     }
@@ -147,12 +151,14 @@ public class MechanicEngine implements Listener {
                             String[] parts = mechanic.split(":");
                             double percent = Double.parseDouble(parts[1]) / 100.0;
                             double extra = e.getDamage() * (percent * marks);
+                            try { extra *= dev.elysium.core.api.CoreAPI.getMetaMultiplier("BLOOD"); } catch(Exception ex) {}
                             e.setDamage(e.getDamage() + extra);
                         } catch (Exception ex) {}
                     }
                     if (mechanic.startsWith("CONSUME_BLOOD_MARK_ON_DASH") && !alreadyConsumed) {
                         if (marks >= 5 && isDashHit) {
                             double boom = 50.0 * marks;
+                            try { boom *= dev.elysium.core.api.CoreAPI.getMetaMultiplier("BLOOD"); } catch(Exception ex) {}
                             e.setDamage(e.getDamage() + boom);
                             player.sendMessage("§c§l💥 Huyết Ấn Nổ!");
                             plugin.getMarkManager().consumeMarks(target, "BLOOD_MARK");
