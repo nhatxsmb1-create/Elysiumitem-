@@ -1,4 +1,10 @@
-package dev.elysium.item.accessory;
+﻿import os
+
+def write_file(path, content):
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(content)
+
+asd = r'''package dev.elysium.item.accessory;
 
 import dev.elysium.item.util.ItemSerializer;
 import org.bukkit.inventory.ItemStack;
@@ -53,3 +59,6 @@ public class AccessorySlotData {
         return result;
     }
 }
+'''
+write_file('src/main/java/dev/elysium/item/accessory/AccessorySlotData.java', asd)
+print("Updated AccessorySlotData.java")
