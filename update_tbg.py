@@ -1,4 +1,10 @@
-package dev.elysium.item.gui;
+﻿import os
+
+def write_file(path, content):
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(content)
+
+tbg = '''package dev.elysium.item.gui;
 import dev.elysium.core.gui.ElysiumGui;
 import dev.elysium.core.gui.GuiButton;
 import dev.elysium.core.gui.ItemBuilder;
@@ -122,3 +128,6 @@ public class TrangBiGui extends ElysiumGui {
         return item;
     }
 }
+'''
+write_file('src/main/java/dev/elysium/item/gui/TrangBiGui.java', tbg)
+print("Updated TrangBiGui.java")
